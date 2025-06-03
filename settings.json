@@ -1,0 +1,41 @@
+{
+  "locations": {
+    "Winnipesaukee": {
+      "lat": "43.6406",
+      "lon": "-72.1440"
+    },
+    "Newfound": {
+      "lat": "43.7528",
+      "lon": "-71.7999"
+    },
+    "Squam": {
+      "lat": "43.8280",
+      "lon": "-71.5503"
+    },
+    "Champlain": {
+      "lat": "44.4896",
+      "lon": "-73.3582"
+    },
+    "Mascoma": {
+      "lat": "43.6587",
+      "lon": "-72.3200"
+    }
+  },
+  "thresholds": {
+    "wind_speed": {
+      "great": 5,
+      "good_min": 6,
+      "good_max": 8,
+      "bad_min": 9,
+      "bad_max": 10
+    },
+    "wind_gust": {
+      "gusty": 15
+    },
+    "temp": {
+      "cold_max": 50,
+      "hot_min": 85
+    },
+    "pressure": 29.92
+  }
+}
