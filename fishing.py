@@ -1,6 +1,7 @@
 import requests
 import datetime
 import json
+import os
 
 # Read the API key from config.json
 with open("config.json") as config_file:
@@ -14,11 +15,9 @@ with open("settings.json") as settings_file:
     thresholds = settings.get("thresholds", {})
 
 if not api_key:
-    print("Error: 'api_key' must be set in config.json.")
-    exit(1)
+    raise RuntimeError("Error: 'api_key' must be set in config.json.")
 if not locations:
-    print("Error: 'locations' must be defined in settings.json.")
-    exit(1)
+    raise RuntimeError("Error: 'locations' must be defined in settings.json.")
 
 # Extract threshold values
 wind_speed_thresholds = thresholds.get("wind_speed", {})
@@ -55,49 +54,40 @@ for location_name, coords in locations.items():
         response = requests.get(onecall_url)
         response.raise_for_status()
         forecast_data = response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching data for {location_name}: {e}")
+    except requests.exceptions.RequestException:
         continue
 
     # Extract daily forecasts (up to 8 days)
     daily_list = forecast_data.get('daily', [])[:8]
     for day_data in daily_list:
-        # Parse date
         date_ts = datetime.datetime.fromtimestamp(day_data.get('dt'))
         date_str = date_ts.strftime('%A %m-%d-%Y')
-
-        # Sunrise
+        
         sunrise_ts = datetime.datetime.fromtimestamp(day_data.get('sunrise'))
         sunrise_str = sunrise_ts.strftime('%H:%M')
 
-        # Summary
         summary = day_data.get('summary') if day_data.get('summary') else day_data.get('weather', [{}])[0].get('description', '')
-        summary = summary[:38] + ".." if len(summary) > 40 else summary
 
-        # Temperature
         temp_day = day_data.get('temp', {}).get('day')
 
-        # Pressure
         pressure_hpa = day_data.get('pressure')
         pressure_in = round(pressure_hpa * 0.02953, 2) if pressure_hpa is not None else None
 
-        # Wind speed and gust
         wind_speed = day_data.get('wind_speed')
         wind_gust = day_data.get('wind_gust', 0)
 
-        # Base fishing condition
+        # Determine fishing base label
         if wind_speed is None:
             fishing_base = ""
         elif wind_speed <= wind_great:
-            fishing_base = "Lite Wind"
+            fishing_base = "Great Fishing-Lite Wind"
         elif wind_good_min <= wind_speed <= wind_good_max:
-            fishing_base = "Moderate Wind"
+            fishing_base = "Good Fishing-Moderate Wind"
         elif wind_bad_min <= wind_speed <= wind_bad_max:
-            fishing_base = "High Wind"
+            fishing_base = "Tough Fishing-High Wind"
         else:
-            fishing_base = "Absolutely no fishing"
+            fishing_base = "Stay Home No Fishing"
 
-        # Additional notes: gust, temp, pressure
         notes = []
         if wind_gust and wind_gust > gust_gusty:
             notes.append("Gusty")
@@ -116,7 +106,6 @@ for location_name, coords in locations.items():
 
         fishing = f"{fishing_base} ({', '.join(notes)})" if fishing_base else ", ".join(notes)
 
-        # Append row dict
         all_rows.append({
             "date_ts": date_ts,
             "location": location_name,
@@ -127,17 +116,106 @@ for location_name, coords in locations.items():
             "pressure": pressure_in,
             "wind_speed": wind_speed,
             "wind_gust": wind_gust,
-            "fishing": fishing
+            "fishing": fishing,
+            "fishing_base": fishing_base  # store base for badge
         })
 
-# Sort all rows by date
+# Sort rows by date
 all_rows.sort(key=lambda x: x["date_ts"])
 
-# Print combined table header
-header = ["Location", "Date", "Sunrise", "Summary", "Temp (°F)", "Pressure (inHg)", "Wind Speed (mph)", "Wind Gust (mph)", "Fishing"]
-print(f"{header[0]:<15} {header[1]:<22} {header[2]:<8} {header[3]:<40} {header[4]:<12} {header[5]:<16} {header[6]:<18} {header[7]:<18} {header[8]:<30}")
-print("-" * 225)
-
-# Print each row in sorted order
+# Group rows by date_str
+grouped = {}
 for row in all_rows:
-    print(f"{row['location']:<15} {row['date_str']:<22} {row['sunrise']:<8} {row['summary']:<40} {str(row['temp']):<12} {str(row['pressure']):<16} {str(row['wind_speed']):<18} {str(row['wind_gust']):<18} {row['fishing']:<30}")
+    grouped.setdefault(row["date_str"], []).append(row)
+
+# Function to generate badge HTML based on fishing_base
+def badge_html(base_label):
+    color = "gray"
+    if base_label.startswith("Great Fishing"):
+        color = "green"
+    elif base_label.startswith("Good Fishing"):
+        color = "gold"
+    elif base_label.startswith("Tough Fishing"):
+        color = "orange"
+    elif base_label.startswith("Stay Home No Fishing"):
+        color = "red"
+    return f"<span style='display:inline-block;width:12px;height:12px;background-color:{color};border-radius:50%;margin-right:5px;'></span>"
+
+# Build HTML content
+table_blocks = []
+# Single legend at top
+legend_html = (
+    f"<div style='margin-bottom:10px;'>"
+    f"<strong>Legend:</strong> "
+    f"<span style='color:green;'>● Great Fishing (≤ {wind_great} mph wind)</span>, "
+    f"<span style='color:gold;'>● Good Fishing ({wind_good_min}-{wind_good_max} mph wind)</span>, "
+    f"<span style='color:orange;'>● Tough Fishing ({wind_bad_min}-{wind_bad_max} mph wind)</span>, "
+    f"<span style='color:red;'>● No Fishing (&gt; {wind_bad_max} mph wind)</span>"  
+    f"<br>Wind Gust Threshold: &gt; {gust_gusty} mph is Gusty. "
+    f"Pressure Standard: {pressure_threshold} inHg (Low &lt; {pressure_threshold}, High &gt;= {pressure_threshold}). "
+    f"Low pressure often indicates approaching storms and can stir fish activity, "
+    f"while high pressure can calm conditions but may reduce fish feeding."
+    f"</div>"
+)
+table_blocks.append(legend_html)
+for date_str, rows in grouped.items():
+    # Header for this date
+    table_blocks.append(f"<h2>{date_str}</h2>")
+    # Table for this date
+    block = [
+        "<table>",
+        "<thead><tr>",
+        "<th>Location</th><th>Sunrise</th><th>Summary</th>",
+        "<th>Temp (°F)</th><th>Pressure (inHg)</th>",
+        "<th>Wind Speed (mph)</th><th>Wind Gust (mph)</th><th>Fishing</th>",
+        "</tr></thead>",
+        "<tbody>"
+    ]
+    for row in rows:
+        badge = badge_html(row['fishing_base'])
+        block.append(
+            f"<tr>"
+            f"<td>{row['location']}</td>"
+            f"<td>{row['sunrise']}</td>"
+            f"<td>{row['summary']}</td>"
+            f"<td>{row['temp']}</td>"
+            f"<td>{row['pressure']}</td>"
+            f"<td>{row['wind_speed']}</td>"
+            f"<td>{row['wind_gust']}</td>"
+            f"<td>{badge}{row['fishing']}</td>"
+            f"</tr>"
+        )
+    block.append("</tbody></table>")
+    table_blocks.append("".join(block))
+
+html_content = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fishing Forecast</title>
+  <style>
+    table {{ border-collapse: collapse; width: 100%; margin-bottom: 20px; }}
+    th, td {{ border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: top; word-wrap: break-word; white-space: normal; }}
+    th {{ background-color: #f2f2f2; }}
+    h2 {{ margin-top: 30px; }}
+  </style>
+</head>
+<body>
+  <h1>8-Day Fishing Forecast</h1>
+  {"".join(table_blocks)}
+</body>
+</html>
+"""
+
+# Define output path
+output_path = "/var/www/fishing.thepeaveys.net/public_html/index.html"
+# Ensure directory exists
+os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+# Write to the homepage file
+with open(output_path, "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print(f"Forecast HTML written to {output_path}")
