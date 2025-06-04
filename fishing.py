@@ -2,6 +2,7 @@ import requests
 import datetime
 import json
 import os
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # Read the API key from config.json
 with open("config.json") as config_file:
