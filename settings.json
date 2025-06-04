@@ -24,9 +24,9 @@
   "thresholds": {
     "wind_speed": {
       "great": 5,
-      "good_min": 6,
+      "good_min": 5.1,
       "good_max": 8,
-      "bad_min": 9,
+      "bad_min": 8.1,
       "bad_max": 10
     },
     "wind_gust": {
@@ -34,7 +34,7 @@
     },
     "temp": {
       "cold_max": 50,
-      "hot_min": 85
+      "hot_min": 80
     },
     "pressure": 29.92
   }
