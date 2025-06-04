@@ -3,14 +3,10 @@ import datetime
 import json
 import os
 
-# Ensure script's working directory is its own directory
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
-# Read config.json for API key and output directory
+# Read the API key from config.json
 with open("config.json") as config_file:
     config = json.load(config_file)
     api_key = config.get("api_key")
-    output_dir = config.get("output_dir", os.getcwd())  # fallback to current dir
 
 # Read settings (locations and thresholds) from settings.json
 with open("settings.json") as settings_file:
@@ -66,7 +62,7 @@ for location_name, coords in locations.items():
     for day_data in daily_list:
         date_ts = datetime.datetime.fromtimestamp(day_data.get('dt'))
         date_str = date_ts.strftime('%A %m-%d-%Y')
-
+        
         sunrise_ts = datetime.datetime.fromtimestamp(day_data.get('sunrise'))
         sunrise_str = sunrise_ts.strftime('%H:%M')
 
@@ -90,7 +86,7 @@ for location_name, coords in locations.items():
         elif wind_bad_min <= wind_speed <= wind_bad_max:
             fishing_base = "Tough Fishing-High Wind"
         else:
-            fishing_base = "Stay Home No Fishing"
+            fishing_base = "Absolutely No Fishing"
 
         notes = []
         if wind_gust and wind_gust > gust_gusty:
@@ -121,7 +117,7 @@ for location_name, coords in locations.items():
             "wind_speed": wind_speed,
             "wind_gust": wind_gust,
             "fishing": fishing,
-            "fishing_base": fishing_base
+            "fishing_base": fishing_base  # store base for badge
         })
 
 # Sort rows by date
@@ -141,29 +137,33 @@ def badge_html(base_label):
         color = "gold"
     elif base_label.startswith("Tough Fishing"):
         color = "orange"
-    elif base_label.startswith("Stay Home No Fishing"):
+    elif base_label.startswith("Absolutely No Fishing"):
         color = "red"
     return f"<span style='display:inline-block;width:12px;height:12px;background-color:{color};border-radius:50%;margin-right:5px;'></span>"
 
 # Build HTML content
 table_blocks = []
+# Single legend at top
 legend_html = (
     f"<div style='margin-bottom:10px;'>"
     f"<strong>Legend:</strong> "
     f"<span style='color:green;'>● Great Fishing (≤ {wind_great} mph wind)</span>, "
     f"<span style='color:gold;'>● Good Fishing ({wind_good_min}-{wind_good_max} mph wind)</span>, "
     f"<span style='color:orange;'>● Tough Fishing ({wind_bad_min}-{wind_bad_max} mph wind)</span>, "
-    f"<span style='color:red;'>● No Fishing (&gt; {wind_bad_max} mph wind)</span>"
+    f"<span style='color:red;'>● No Fishing (&gt; {wind_bad_max} mph wind)</span>"  
     f"<br>Wind Gust Threshold: &gt; {gust_gusty} mph is Gusty. "
     f"Pressure Standard: {pressure_threshold} inHg (Low &lt; {pressure_threshold}, High &gt;= {pressure_threshold}). "
     f"Low pressure often indicates approaching storms and can stir fish activity, "
     f"while high pressure can calm conditions but may reduce fish feeding."
     f"</div>"
 )
-table_blocks.append(legend_html)
-
+# Timestamp of last run
+timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+table_blocks.append(f"<div style='font-size:0.9em; color:#555; margin-bottom:20px;'>Last updated: {timestamp}</div>")
 for date_str, rows in grouped.items():
+    # Header for this date
     table_blocks.append(f"<h2>{date_str}</h2>")
+    # Table for this date
     block = [
         "<table>",
         "<thead><tr>",
@@ -211,11 +211,12 @@ html_content = f"""
 </html>
 """
 
-# Use output_dir from config.json
-output_path = os.path.join(output_dir, "index.html")
+# Define output path
+output_path = "/var/www/fishing.thepeaveys.net/public_html/index.html"
+# Ensure directory exists
 os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-# Write the HTML file
+# Write to the homepage file
 with open(output_path, "w", encoding="utf-8") as f:
     f.write(html_content)
 
