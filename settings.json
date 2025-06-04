@@ -19,6 +19,14 @@
     "Mascoma": {
       "lat": "43.6587",
       "lon": "-72.3200"
+    },
+    "Sunapee": {
+      "lat": "43.3770",
+      "lon": "-72.0850"
+    },
+    "First Connecticut": {
+      "lat": "45.0926",
+      "lon": "-71.2478"
     }
   },
   "thresholds": {
