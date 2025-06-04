@@ -3,10 +3,14 @@ import datetime
 import json
 import os
 
-# Read the API key from config.json
+# Ensure script's working directory is its own directory
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+# Read config.json for API key and output directory
 with open("config.json") as config_file:
     config = json.load(config_file)
     api_key = config.get("api_key")
+    output_dir = config.get("output_dir", os.getcwd())  # fallback to current dir
 
 # Read settings (locations and thresholds) from settings.json
 with open("settings.json") as settings_file:
@@ -86,7 +90,7 @@ for location_name, coords in locations.items():
         elif wind_bad_min <= wind_speed <= wind_bad_max:
             fishing_base = "Tough Fishing-High Wind"
         else:
-            fishing_base = "Absolutely No Fishing"
+            fishing_base = "Stay Home No Fishing"
 
         notes = []
         if wind_gust and wind_gust > gust_gusty:
@@ -117,7 +121,7 @@ for location_name, coords in locations.items():
             "wind_speed": wind_speed,
             "wind_gust": wind_gust,
             "fishing": fishing,
-            "fishing_base": fishing_base  # store base for badge
+            "fishing_base": fishing_base
         })
 
 # Sort rows by date
@@ -137,7 +141,7 @@ def badge_html(base_label):
         color = "gold"
     elif base_label.startswith("Tough Fishing"):
         color = "orange"
-    elif base_label.startswith("Absolutely No Fishing"):
+    elif base_label.startswith("Stay Home No Fishing"):
         color = "red"
     return f"<span style='display:inline-block;width:12px;height:12px;background-color:{color};border-radius:50%;margin-right:5px;'></span>"
 
@@ -157,13 +161,13 @@ legend_html = (
     f"while high pressure can calm conditions but may reduce fish feeding."
     f"</div>"
 )
-# Timestamp of last run
+table_blocks.append(legend_html)
+# Timestamp of last successful run
 timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 table_blocks.append(f"<div style='font-size:0.9em; color:#555; margin-bottom:20px;'>Last updated: {timestamp}</div>")
+
 for date_str, rows in grouped.items():
-    # Header for this date
     table_blocks.append(f"<h2>{date_str}</h2>")
-    # Table for this date
     block = [
         "<table>",
         "<thead><tr>",
@@ -190,29 +194,29 @@ for date_str, rows in grouped.items():
     block.append("</tbody></table>")
     table_blocks.append("".join(block))
 
-html_content = f"""
-<!DOCTYPE html>
+html_content = (
+"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fishing Forecast</title>
   <style>
-    table {{ border-collapse: collapse; width: 100%; margin-bottom: 20px; }}
-    th, td {{ border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: top; word-wrap: break-word; white-space: normal; }}
-    th {{ background-color: #f2f2f2; }}
-    h2 {{ margin-top: 30px; }}
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: top; word-wrap: break-word; white-space: normal; }
+    th { background-color: #f2f2f2; }
+    h2 { margin-top: 30px; }
   </style>
 </head>
 <body>
   <h1>8-Day Fishing Forecast</h1>
-  {"".join(table_blocks)}
+  """ + "".join(table_blocks) + """
 </body>
-</html>
-"""
+</html>"""
+)
 
 # Define output path
-output_path = "/var/www/fishing.thepeaveys.net/public_html/index.html"
+output_path = os.path.join(output_dir, "index.html")
 # Ensure directory exists
 os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
