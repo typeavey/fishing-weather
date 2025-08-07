@@ -1,24 +1,26 @@
 # Fishing Forecast Automation
 
-This repository contains a Python script that fetches 8-day weather forecasts for multiple lakes, evaluates “fishing conditions” based on configurable thresholds (wind, temperature, pressure), and prints a combined, date-sorted table to the console. You can also adapt it to push results to Google Sheets or deploy to GitHub Pages as a static HTML page.
+This repository contains a Python script that fetches 8-day weather forecasts for multiple lakes, evaluates “fishing conditions” based on configurable thresholds (wind, temperature, pressure), and generates a styled HTML page grouped by date with visual condition badges. Structured logging is included for observability.
 
 ---
 
 ## Contents
 
-* **`fetch_forecast.py`**
-  Main Python script that reads API credentials and settings, retrieves weather data from OpenWeatherMap’s One Call API, computes “fishing” status, and outputs a formatted table.
+* **`fishing.py`**
+  Main Python script that reads API credentials and settings, retrieves weather data from OpenWeatherMap’s One Call API (3.0), computes “fishing” status, and writes a styled `index.html` to your configured output directory.
 
 * **`config.json`**
-  Contains a single field:
+  Contains API and output configuration:
 
   ```json
   {
-    "api_key": "YOUR_OPENWEATHERMAP_API_KEY"
+    "api_key": "YOUR_OPENWEATHERMAP_API_KEY",
+    "output_dir": "/absolute/path/where/html/should/be/written"
   }
   ```
 
   * **`api_key`**: Your OpenWeatherMap API key (One Call 3.0 must be enabled on your account).
+  * **`output_dir`**: Directory where the generated `index.html` will be written (the script will create it if needed).
 
 * **`settings.json`**
   Defines the lakes/locations and all threshold values used to categorize fishing conditions:
@@ -71,24 +73,17 @@ This repository contains a Python script that fetches 8-day weather forecasts fo
 
 ## Prerequisites
 
-1. **Python 3.8+** (tested on 3.10 and 3.11)
+1. **Python 3.10+** (required for newer type hints used; tested on 3.10 and 3.11)
 2. **PIP** (for installing dependencies)
 3. **An OpenWeatherMap API key** (One Call API 3.0 enabled).
 
-   * Sign up at [https://openweathermap.org/](https://openweathermap.org/) and enable the One Call 3.0 subscription.
+   * Sign up at [OpenWeatherMap](https://openweathermap.org/) and enable the One Call 3.0 subscription.
 
 ---
 
 ## Installation
 
-1. **Clone this repository**:
-
-   ```bash
-   git clone https://github.com/<your-username>/fishing-forecast.git
-   cd fishing-forecast
-   ```
-
-2. **Create a virtual environment (recommended)**:
+1. **Create a virtual environment (recommended)**:
 
    ```bash
    python3 -m venv venv
@@ -96,10 +91,10 @@ This repository contains a Python script that fetches 8-day weather forecasts fo
    # venv\Scripts\activate.bat   # Windows
    ```
 
-3. **Install required packages**:
+2. **Install required packages**:
 
    ```bash
-   pip install requests
+   pip install -r requirements.txt
    ```
 
 ---
@@ -107,15 +102,15 @@ This repository contains a Python script that fetches 8-day weather forecasts fo
 ## Configuration
 
 1. **Populate `config.json`**
-   Rename the placeholder or edit directly:
 
    ```json
    {
-     "api_key": "YOUR_OPENWEATHERMAP_API_KEY"
+     "api_key": "YOUR_OPENWEATHERMAP_API_KEY",
+     "output_dir": "/absolute/path/to/output"
    }
    ```
 
-   Replace `"YOUR_OPENWEATHERMAP_API_KEY"` with your actual key.
+   Replace `"YOUR_OPENWEATHERMAP_API_KEY"` with your actual key. `output_dir` is where `index.html` will be written.
 
 2. **Customize `settings.json`**
 
@@ -127,33 +122,25 @@ This repository contains a Python script that fetches 8-day weather forecasts fo
 
 ## Usage
 
-Run the forecast script:
+Generate the HTML page at `output_dir/index.html`:
 
 ```bash
-python fetch_forecast.py
+python fishing.py
 ```
 
-This will:
+Using the project venv explicitly:
 
-1. Load your OpenWeatherMap API key from `config.json`.
+```bash
+fishing-weather/venv/bin/python fishing.py
+```
 
-2. Load your set of locations and threshold rules from `settings.json`.
+What happens:
 
-3. Call the One Call 3.0 API for each lake’s latitude/longitude.
-
-4. Build and sort an array of rows containing:
-
-   * **Location**
-   * **Date** (e.g. `Saturday 06-05-2025`)
-   * **Sunrise** time
-   * **Weather summary** (truncated if > 40 chars)
-   * **Day temperature** (°F)
-   * **Barometric pressure** (converted from hPa → inHg)
-   * **Wind speed** (mph)
-   * **Wind gust** (mph)
-   * **Fishing** (base label + appended notes for gusts, temp, pressure)
-
-5. Print a combined table, sorted by date, with the above columns.
+1. Loads your API key and target output directory from `config.json`.
+2. Loads locations and thresholds from `settings.json`.
+3. Calls the One Call 3.0 API for each lake’s latitude/longitude.
+4. Computes fishing conditions per location and day.
+5. Writes a styled `index.html` grouped by date with a legend and per-row condition badge.
 
 ---
 
@@ -170,74 +157,44 @@ Newfound        Saturday 06-05-2025    05:12    mostly sunny                    
 
 ---
 
-## Automating Hourly Updates
+## Automating Updates
 
-If you want hourly updates without manual intervention, you can:
+If you want periodic updates:
 
-1. **GitHub Actions (recommended)**
+1. **GitHub Actions**
 
-   * Create a workflow `.github/workflows/auto-update.yml` that:
-
-     1. Checks out the repo.
-     2. Installs Python and dependencies.
-     3. Runs `fetch_forecast.py` to regenerate `index.html` (see optional step below).
-     4. **(Optional)** Commits newly generated HTML → `gh-pages` branch.
-   * **Skip commits if unchanged** (use a `git diff --quiet` check) or use `git commit --amend` + `--force` to keep a single-commit history.
+   - Create a workflow that:
+     1. Checks out the repo
+     2. Installs Python and `requests`
+     3. Runs `python fishing.py`
+     4. Commits the generated `index.html` in your chosen `output_dir`
+   - Consider pointing `output_dir` to a `docs/` folder in your repo and enable GitHub Pages to serve from `docs`.
 
 2. **Local cron job**
 
-   * Install `cron` on your machine/server.
-   * Create a `crontab -e` entry:
+   - Example crontab entry (hourly):
 
      ```
-     0 * * * * /path/to/venv/bin/python /path/to/fetch_forecast.py >> /path/to/fetch.log 2>&1
+     0 * * * * /path/to/venv/bin/python /path/to/fishing.py >> /path/to/fishing.log 2>&1
      ```
-   * This runs at the top of every hour, updating your console output or (if you extend to write HTML/Sheets) refreshing wherever you publish.
 
 ---
 
-## Optional: Generate a Static HTML Page
+## Logging
 
-Instead of printing to console, you can modify `fetch_forecast.py` to create `index.html`:
+Structured logging is enabled. Control verbosity with the `LOG_LEVEL` environment variable (`DEBUG`, `INFO`, `WARNING`, `ERROR`).
 
-1. Build a list of table rows (`<tr>…</tr>`) inside your script.
-2. Wrap them in a basic HTML template:
+- macOS/Linux (zsh/bash):
 
-   ```html
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-     <meta charset="UTF-8" />
-     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-     <title>Fishing Forecast</title>
-     <style>
-       table { border-collapse: collapse; width: 100%; }
-       th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-       th { background-color: #f2f2f2; }
-     </style>
-   </head>
-   <body>
-     <h1>8-Day Fishing Forecast</h1>
-     <table>
-       <thead>
-         <tr>
-           <th>Location</th><th>Date</th><th>Sunrise</th><th>Summary</th>
-           <th>Temp (°F)</th><th>Pressure (inHg)</th>
-           <th>Wind Speed (mph)</th><th>Wind Gust (mph)</th><th>Fishing</th>
-         </tr>
-       </thead>
-       <tbody>
-         <!-- Insert rows_html here -->
-       </tbody>
-     </table>
-   </body>
-   </html>
-   ```
-3. Write it to `index.html` instead of printing.
-4. Commit/push `index.html` to a `gh-pages` branch (or `/docs` folder on `main`).
-5. Enable GitHub Pages (Settings → Pages) to serve from `gh-pages` (root) or `main/docs`.
+  ```bash
+  LOG_LEVEL=DEBUG python fishing.py
+  ```
 
-   * Site URL: `https://<your-username>.github.io/fishing-forecast/`.
+- PowerShell:
+
+  ```powershell
+  $env:LOG_LEVEL='DEBUG'; python fishing.py
+  ```
 
 ---
 
@@ -257,7 +214,7 @@ If you prefer hosting in a Google Sheet and embedding in Google Sites:
    pip install gspread google-auth
    ```
 
-3. **Add to `fetch_forecast.py`** (after building `all_rows`):
+3. **Add to `fishing.py`** (after building `all_rows`):
 
    ```python
    import gspread
