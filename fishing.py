@@ -3,12 +3,13 @@ import json
 import datetime
 import logging
 import requests
+from typing import Union, List, Dict, Tuple
 
 
 logger = logging.getLogger("fishing_forecast")
 
 
-def configure_logging(level_str: str | None = None) -> None:
+def configure_logging(level_str: Union[str, None] = None) -> None:
     level_name = (level_str or os.getenv("LOG_LEVEL") or "INFO").upper()
     level = getattr(logging, level_name, logging.INFO)
     logging.basicConfig(
@@ -25,7 +26,7 @@ def ensure_working_directory() -> None:
     logger.debug("Set working directory to %s", script_dir)
 
 
-def load_config(config_path: str = "config.json") -> tuple[str, str]:
+def load_config(config_path: str = "config.json") -> Tuple[str, str]:
     try:
         with open(config_path) as config_file:
             config = json.load(config_file)
@@ -44,7 +45,7 @@ def load_config(config_path: str = "config.json") -> tuple[str, str]:
     return api_key, output_dir
 
 
-def load_settings(settings_path: str = "settings.json") -> tuple[dict, dict]:
+def load_settings(settings_path: str = "settings.json") -> Tuple[Dict, Dict]:
     try:
         with open(settings_path) as settings_file:
             settings = json.load(settings_file)
@@ -83,7 +84,7 @@ def extract_thresholds(thresholds: dict) -> dict:
     return th
 
 
-def fetch_forecast(lat: str, lon: str, api_key: str, *, timeout: int = 10) -> list[dict]:
+def fetch_forecast(lat: str, lon: str, api_key: str, *, timeout: int = 10) -> List[Dict]:
     onecall_url = (
         f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}"
         f"&exclude=current,minutely,hourly,alerts&units=imperial&appid={api_key}"
@@ -106,12 +107,12 @@ def fetch_forecast(lat: str, lon: str, api_key: str, *, timeout: int = 10) -> li
 
 
 def determine_fishing_labels(
-    wind_speed: float | None,
-    wind_gust: float | None,
-    temp_day: float | None,
-    pressure_in: float | None,
+    wind_speed: Union[float, None],
+    wind_gust: Union[float, None],
+    temp_day: Union[float, None],
+    pressure_in: Union[float, None],
     th: dict,
-) -> tuple[str, str]:
+) -> Tuple[str, str]:
     # Base label from wind speed
     if wind_speed is None:
         fishing_base = ""
@@ -125,7 +126,7 @@ def determine_fishing_labels(
         fishing_base = "Stay Home No Fishing"
 
     # Notes
-    notes: list[str] = []
+    notes: List[str] = []
     if wind_gust and wind_gust > th["gust_gusty"]:
         notes.append("Gusty")
     if temp_day is not None:
@@ -166,14 +167,14 @@ def build_rows_for_location(
     coords: dict,
     api_key: str,
     th: dict,
-) -> list[dict]:
+) -> List[Dict]:
     lat = coords.get("lat")
     lon = coords.get("lon")
     if not lat or not lon:
         logger.warning("Skipping location '%s' due to missing lat/lon", location_name)
         return []
 
-    rows: list[dict] = []
+    rows: List[Dict] = []
     days = fetch_forecast(lat, lon, api_key)
     logger.info("%s: received %d day(s) of forecast", location_name, len(days))
     for day_data in days:
@@ -219,14 +220,14 @@ def build_rows_for_location(
     return rows
 
 
-def group_rows_by_date(all_rows: list[dict]) -> dict[str, list[dict]]:
-    grouped: dict[str, list[dict]] = {}
+def group_rows_by_date(all_rows: List[Dict]) -> Dict[str, List[Dict]]:
+    grouped: Dict[str, List[Dict]] = {}
     for row in all_rows:
         grouped.setdefault(row["date_str"], []).append(row)
     return grouped
 
 
-def build_html(all_rows: list[dict], th: dict) -> str:
+def build_html(all_rows: List[Dict], th: dict) -> str:
     # Sort by datetime first
     all_rows.sort(key=lambda x: x["date_ts"])  # in-place
     grouped = group_rows_by_date(all_rows)
@@ -247,7 +248,7 @@ def build_html(all_rows: list[dict], th: dict) -> str:
         f"</div>"
     )
 
-    table_blocks: list[str] = [legend_html]
+    table_blocks: List[str] = [legend_html]
 
     # Timestamp of last successful run
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -326,7 +327,7 @@ def main() -> None:
     locations, thresholds_raw = load_settings()
     th = extract_thresholds(thresholds_raw)
 
-    all_rows: list[dict] = []
+    all_rows: List[Dict] = []
     for location_name, coords in locations.items():
         all_rows.extend(build_rows_for_location(location_name, coords, api_key, th))
 
