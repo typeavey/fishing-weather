@@ -9,7 +9,15 @@ import json
 import datetime
 import logging
 from flask import Flask, jsonify, request, send_from_directory
-from flask_cors import CORS
+
+# Import CORS with fallback
+try:
+    from flask_cors import CORS
+except ImportError:
+    # Fallback for when flask-cors is not installed
+    class CORS:
+        def __init__(self, app):
+            pass
 
 # Import from the local fishing module
 try:
@@ -61,7 +69,7 @@ CACHE_DURATION = 300  # 5 minutes
 db = WorkingWeatherDatabase()
 
 def get_cached_weather_data():
-    """Get weather data from cache or generate new data"""
+    """Get weather data from cache or database or generate new data"""
     global weather_cache, cache_timestamp
     
     current_time = datetime.datetime.now()
@@ -73,7 +81,37 @@ def get_cached_weather_data():
         logger.debug("Returning cached weather data")
         return weather_cache
     
-    # Generate new data
+    # Try to get data from database first
+    try:
+        logger.info("Attempting to load weather data from database")
+        db_data = db.get_weather_data(limit=100)  # Get last 100 records
+        if db_data:
+            logger.info(f"Loaded {len(db_data)} records from database")
+            # Convert database format to expected format
+            weather_cache = []
+            for record in db_data:
+                # Convert database record to expected format
+                weather_record = {
+                    'date_ts': datetime.datetime.fromtimestamp(record['date_ts']) if record['date_ts'] else None,
+                    'location': record['location'],
+                    'date_str': record['date_str'],
+                    'sunrise': record['sunrise'],
+                    'summary': record['summary'],
+                    'temp': record['temp_day'],
+                    'pressure': record['pressure'],
+                    'wind_speed': record['wind_speed'],
+                    'wind_gust': record['wind_gust'],
+                    'fishing': record['fishing_rating'] or record['fishing_base'],
+                    'fishing_base': record['fishing_base']
+                }
+                weather_cache.append(weather_record)
+            
+            cache_timestamp = current_time
+            return weather_cache
+    except Exception as e:
+        logger.warning(f"Failed to load data from database: {e}")
+    
+    # Generate new data if database is empty or failed
     logger.info("Generating new weather data")
     try:
         ensure_working_directory()
