@@ -8,6 +8,7 @@ User=typeavey
 Group=typeavey
 WorkingDirectory=/home/typeavey/fishing-weather
 Environment=PATH=/home/typeavey/fishing-weather/venv/bin
+Environment=PORT=5001
 ExecStart=/home/typeavey/fishing-weather/venv/bin/python3 app.py
 Restart=always
 RestartSec=10
