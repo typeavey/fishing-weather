@@ -60,17 +60,34 @@ fi
 
 # Step 7: Restart the application
 echo "🔄 Restarting application..."
-sudo systemctl restart fishing-weather
 
-# Step 8: Check status
-echo "📊 Checking application status..."
-sleep 3
-if sudo systemctl is-active --quiet fishing-weather; then
-    echo "✅ Application restarted successfully"
+# Check if systemd service exists
+if systemctl list-unit-files | grep -q fishing-weather; then
+    sudo systemctl restart fishing-weather
+    
+    # Step 8: Check status
+    echo "📊 Checking application status..."
+    sleep 3
+    if sudo systemctl is-active --quiet fishing-weather; then
+        echo "✅ Application restarted successfully"
+    else
+        echo "❌ Application failed to restart"
+        sudo systemctl status fishing-weather
+        echo "💡 If this is the first deployment, run: ./setup-systemd-service.sh"
+        exit 1
+    fi
 else
-    echo "❌ Application failed to restart"
-    sudo systemctl status fishing-weather
-    exit 1
+    echo "⚠️  Systemd service 'fishing-weather' not found"
+    echo "💡 To set up the systemd service, run: ./setup-systemd-service.sh"
+    echo "🔄 For now, starting the application manually..."
+    
+    # Kill any existing Python processes
+    pkill -f "python.*app.py" 2>/dev/null || true
+    
+    # Start the application in the background
+    nohup ./venv/bin/python3 app.py > app.log 2>&1 &
+    echo "✅ Application started manually (PID: $!)"
+    echo "📝 Logs are being written to: app.log"
 fi
 
 # Step 9: Test the application

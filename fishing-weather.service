@@ -1,0 +1,16 @@
+[Unit]
+Description=Fishing Weather Portal
+After=network.target
+
+[Service]
+Type=simple
+User=typeavey
+Group=typeavey
+WorkingDirectory=/home/typeavey/fishing-weather
+Environment=PATH=/home/typeavey/fishing-weather/venv/bin
+ExecStart=/home/typeavey/fishing-weather/venv/bin/python3 app.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
