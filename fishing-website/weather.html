@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fishing Information Portal</title>
+    <title>Weather - Fishing Information Portal</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -101,56 +101,6 @@
             margin-bottom: 2rem;
         }
 
-        /* Dashboard Grid */
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .card-icon {
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.125rem;
-        }
-
-        .icon-weather { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .icon-fishing { background: linear-gradient(135deg, #10b981, #059669); }
-        .icon-locations { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .icon-forecast { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-
         /* Weather Module */
         .weather-module {
             background: white;
@@ -177,6 +127,7 @@
             display: flex;
             gap: 1rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .filter-select {
@@ -185,6 +136,7 @@
             border-radius: 0.5rem;
             background: white;
             font-size: 0.875rem;
+            min-width: 120px;
         }
 
         .refresh-btn {
@@ -196,6 +148,9 @@
             cursor: pointer;
             font-size: 0.875rem;
             transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .refresh-btn:hover {
@@ -212,11 +167,14 @@
             border: 1px solid var(--gray-200);
             border-radius: 0.5rem;
             padding: 1rem;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
+            background: var(--gray-50);
         }
 
         .weather-card:hover {
             border-color: var(--primary-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
         }
 
         .weather-card-header {
@@ -229,6 +187,7 @@
         .location-name {
             font-weight: 600;
             color: var(--gray-900);
+            font-size: 1.1rem;
         }
 
         .fishing-badge {
@@ -237,6 +196,7 @@
             font-size: 0.75rem;
             font-weight: 500;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .badge-great { background: #dcfce7; color: #166534; }
@@ -247,31 +207,34 @@
         .weather-details {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
+            gap: 0.75rem;
             font-size: 0.875rem;
         }
 
         .weather-detail {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            padding: 0.25rem 0;
         }
 
         .weather-detail-label {
             color: var(--gray-600);
+            font-weight: 500;
         }
 
         .weather-detail-value {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--gray-900);
         }
 
-        /* Loading States */
         .loading {
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem;
             color: var(--gray-500);
+            font-size: 0.875rem;
         }
 
         .spinner {
@@ -289,7 +252,50 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Responsive Design */
+        .error-message {
+            text-align: center;
+            color: var(--danger-color);
+            padding: 1rem;
+            background: #fef2f2;
+            border-radius: 0.5rem;
+            border: 1px solid #fecaca;
+        }
+
+        .no-data {
+            text-align: center;
+            color: var(--gray-500);
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        /* Weather Stats */
+        .weather-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -300,31 +306,18 @@
                 gap: 1rem;
             }
 
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-
-            .weather-grid {
-                grid-template-columns: 1fr;
-            }
-
             .weather-controls {
                 flex-direction: column;
                 align-items: stretch;
             }
-        }
-
-        /* Utility Classes */
-        .hidden {
-            display: none;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .mb-4 {
-            margin-bottom: 1rem;
+            
+            .weather-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .weather-details {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -334,7 +327,7 @@
             <div class="header-content">
                 <div class="logo">
                     <i class="fas fa-fish"></i>
-                    Fishing Information Portal
+                    <a href="/" style="color: white; text-decoration: none;">Fishing Information Portal</a>
                 </div>
                 <nav class="nav">
                     <a href="/" class="nav-link">Dashboard</a>
@@ -348,56 +341,33 @@
 
     <main class="main">
         <div class="container">
-            <h1 class="page-title">Fishing Information Dashboard</h1>
-            <p class="page-subtitle">Your comprehensive guide to fishing conditions and weather forecasts</p>
+            <h1 class="page-title">Weather & Fishing Conditions</h1>
+            <p class="page-subtitle">Real-time weather data and fishing conditions for all locations</p>
 
-            <!-- Dashboard Cards -->
-            <div class="dashboard">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Weather Conditions</h3>
-                        <div class="card-icon icon-weather">
-                            <i class="fas fa-cloud-sun"></i>
-                        </div>
-                    </div>
-                    <p>Real-time weather data for all fishing locations</p>
+            <!-- Weather Stats -->
+            <div class="weather-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalLocations">7</div>
+                    <div class="stat-label">Active Locations</div>
                 </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Fishing Forecast</h3>
-                        <div class="card-icon icon-fishing">
-                            <i class="fas fa-fish"></i>
-                        </div>
-                    </div>
-                    <p>8-day fishing conditions and recommendations</p>
+                <div class="stat-card">
+                    <div class="stat-number" id="greatConditions">3</div>
+                    <div class="stat-label">Great Fishing Days</div>
                 </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Fishing Locations</h3>
-                        <div class="card-icon icon-locations">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                    </div>
-                    <p>7 prime fishing locations in the region</p>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgTemp">65°F</div>
+                    <div class="stat-label">Average Temperature</div>
                 </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Extended Forecast</h3>
-                        <div class="card-icon icon-forecast">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                    </div>
-                    <p>Detailed weather patterns and trends</p>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgWind">8 mph</div>
+                    <div class="stat-label">Average Wind Speed</div>
                 </div>
             </div>
 
             <!-- Weather Module -->
             <div class="weather-module">
                 <div class="weather-header">
-                    <h2 class="weather-title">Weather & Fishing Conditions</h2>
+                    <h2 class="weather-title">Detailed Weather Data</h2>
                     <div class="weather-controls">
                         <select class="filter-select" id="locationFilter">
                             <option value="">All Locations</option>
@@ -417,7 +387,8 @@
                             <option value="Stay Home">Stay Home</option>
                         </select>
                         <button class="refresh-btn" id="refreshBtn">
-                            <i class="fas fa-sync-alt"></i> Refresh
+                            <i class="fas fa-sync-alt"></i>
+                            Refresh
                         </button>
                     </div>
                 </div>
@@ -461,30 +432,36 @@
             `;
 
             try {
-                // In a real application, this would be an API call
-                // For now, we'll simulate loading data
-                await simulateDataLoad();
+                // Try to fetch from API first, fallback to static data
+                try {
+                    const response = await fetch('/api/weather');
+                    if (response.ok) {
+                        weatherData = await response.json();
+                    } else {
+                        // Fallback to static data
+                        const staticResponse = await fetch('/weather-data.json');
+                        if (staticResponse.ok) {
+                            weatherData = await staticResponse.json();
+                        } else {
+                            throw new Error('Failed to load weather data');
+                        }
+                    }
+                } catch (apiError) {
+                    console.warn('API not available, using sample data:', apiError);
+                    weatherData = generateSampleData();
+                }
+
+                filteredData = [...weatherData];
+                updateStats();
                 renderWeatherData();
             } catch (error) {
                 weatherContent.innerHTML = `
-                    <div class="text-center">
+                    <div class="error-message">
                         <p>Error loading weather data. Please try again.</p>
                         <button class="refresh-btn" onclick="loadWeatherData()">Retry</button>
                     </div>
                 `;
             }
-        }
-
-        // Simulate data loading (replace with actual API call)
-        async function simulateDataLoad() {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    // This would be replaced with actual API data
-                    weatherData = generateSampleData();
-                    filteredData = [...weatherData];
-                    resolve();
-                }, 1000);
-            });
         }
 
         // Generate sample weather data
@@ -527,10 +504,10 @@
                         summary: getRandomSummary(),
                         temp,
                         pressure,
-                        windSpeed,
-                        windGust,
+                        wind_speed: windSpeed,
+                        wind_gust: windGust,
                         fishing: condition.label,
-                        fishingBase: condition.base,
+                        fishing_base: condition.base,
                         badgeClass: condition.class
                     });
                 }
@@ -551,6 +528,17 @@
             return summaries[Math.floor(Math.random() * summaries.length)];
         }
 
+        // Update statistics
+        function updateStats() {
+            const greatConditions = weatherData.filter(item => item.fishing_base === 'Great').length;
+            const avgTemp = Math.round(weatherData.reduce((sum, item) => sum + item.temp, 0) / weatherData.length);
+            const avgWind = Math.round(weatherData.reduce((sum, item) => sum + item.wind_speed, 0) / weatherData.length);
+
+            document.getElementById('greatConditions').textContent = greatConditions;
+            document.getElementById('avgTemp').textContent = `${avgTemp}°F`;
+            document.getElementById('avgWind').textContent = `${avgWind} mph`;
+        }
+
         // Filter data based on selected filters
         function filterData() {
             const locationFilter = document.getElementById('locationFilter').value;
@@ -558,7 +546,7 @@
 
             filteredData = weatherData.filter(item => {
                 const locationMatch = !locationFilter || item.location === locationFilter;
-                const conditionMatch = !conditionFilter || item.fishingBase === conditionFilter;
+                const conditionMatch = !conditionFilter || item.fishing_base === conditionFilter;
                 return locationMatch && conditionMatch;
             });
 
@@ -571,7 +559,7 @@
             
             if (filteredData.length === 0) {
                 weatherContent.innerHTML = `
-                    <div class="text-center">
+                    <div class="no-data">
                         <p>No weather data found for the selected filters.</p>
                     </div>
                 `;
@@ -591,8 +579,8 @@
             
             Object.entries(groupedByDate).forEach(([date, items]) => {
                 html += `
-                    <div class="mb-4">
-                        <h3 style="color: var(--gray-700); margin-bottom: 1rem; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem;">
+                    <div style="margin-bottom: 1.5rem;">
+                        <h3 style="color: var(--gray-700); margin-bottom: 1rem; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem; font-size: 1.1rem;">
                             ${date}
                         </h3>
                         <div class="weather-grid">
@@ -603,7 +591,7 @@
                         <div class="weather-card">
                             <div class="weather-card-header">
                                 <span class="location-name">${item.location}</span>
-                                <span class="fishing-badge ${item.badgeClass}">${item.fishingBase}</span>
+                                <span class="fishing-badge ${item.badgeClass}">${item.fishing_base}</span>
                             </div>
                             <div class="weather-details">
                                 <div class="weather-detail">
@@ -616,11 +604,11 @@
                                 </div>
                                 <div class="weather-detail">
                                     <span class="weather-detail-label">Wind Speed:</span>
-                                    <span class="weather-detail-value">${item.windSpeed} mph</span>
+                                    <span class="weather-detail-value">${item.wind_speed} mph</span>
                                 </div>
                                 <div class="weather-detail">
                                     <span class="weather-detail-label">Wind Gust:</span>
-                                    <span class="weather-detail-value">${item.windGust} mph</span>
+                                    <span class="weather-detail-value">${item.wind_gust} mph</span>
                                 </div>
                                 <div class="weather-detail">
                                     <span class="weather-detail-label">Pressure:</span>

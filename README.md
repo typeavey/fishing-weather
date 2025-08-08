@@ -1,274 +1,263 @@
-# Fishing Forecast Automation
+# Fishing Information Portal
 
-This repository contains a Python script that fetches 8-day weather forecasts for multiple lakes, evaluates “fishing conditions” based on configurable thresholds (wind, temperature, pressure), and generates a styled HTML page grouped by date with visual condition badges. Structured logging is included for observability.
+A modern, interactive fishing information portal with modular weather components and real-time weather data integration.
 
----
+## 🌟 Features
 
-## Contents
+- **Interactive Dashboard**: Modern, responsive design with real-time weather data
+- **Modular Weather Components**: Embeddable weather widgets for other websites
+- **REST API**: Full API for integrating weather data into other applications
+- **Real-time Updates**: Automatic data refresh and caching
+- **Location Filtering**: Filter weather data by location and fishing conditions
+- **Mobile Responsive**: Works seamlessly on desktop, tablet, and mobile devices
 
-* **`fishing.py`**
-  Main Python script that reads API credentials and settings, retrieves weather data from OpenWeatherMap’s One Call API (3.0), computes “fishing” status, and writes a styled `index.html` to your configured output directory.
+## 🏗️ Architecture
 
-* **`config.json`**
-  Contains API and output configuration:
+### Frontend Components
 
-  ```json
-  {
-    "api_key": "YOUR_OPENWEATHERMAP_API_KEY",
-    "output_dir": "/absolute/path/where/html/should/be/written"
-  }
-  ```
+1. **Main Portal** (`index.html`)
+   - Interactive dashboard with weather overview
+   - Location and condition filtering
+   - Real-time data updates
 
-  * **`api_key`**: Your OpenWeatherMap API key (One Call 3.0 must be enabled on your account).
-  * **`output_dir`**: Directory where the generated `index.html` will be written (the script will create it if needed).
+2. **Weather Module** (`weather-module.html`)
+   - Standalone weather component
+   - Can be embedded in other websites
+   - Full filtering and refresh capabilities
 
-* **`settings.json`**
-  Defines the lakes/locations and all threshold values used to categorize fishing conditions:
+3. **Weather Widget** (`weather-widget.html`)
+   - Lightweight embeddable widget
+   - Perfect for sidebar integration
+   - Minimal footprint
 
-  ```json
-  {
-    "locations": {
-      "Winnipesaukee": { "lat": "43.6406", "lon": "-72.1440" },
-      "Newfound":     { "lat": "43.7528", "lon": "-71.7999" },
-      "Squam":        { "lat": "43.8280", "lon": "-71.5503" },
-      "Champlain":    { "lat": "44.4896", "lon": "-73.3582" },
-      "Mascoma":      { "lat": "43.6587", "lon": "-72.3200" }
-    },
-    "thresholds": {
-      "wind_speed": {
-        "great":    5,
-        "good_min": 6,
-        "good_max": 8,
-        "bad_min":  9,
-        "bad_max":  10
-      },
-      "wind_gust": {
-        "gusty": 15
-      },
-      "temp": {
-        "cold_max": 50,
-        "hot_min":  85
-      },
-      "pressure": 29.92
-    }
-  }
-  ```
+### Backend API
 
-  * **`locations`**: A dictionary of `{ "LocationName": { "lat": "...", "lon": "..." } }`. Add or remove any lake coordinates here.
-  * **`thresholds.wind_speed`**:
+1. **Flask API Server** (`app.py`)
+   - RESTful API endpoints
+   - Data caching for performance
+   - CORS support for cross-origin requests
 
-    * `great`: ≤ X mph → “Lite Wind”
-    * `good_min`–`good_max`: Y–Z mph → “Moderate Wind”
-    * `bad_min`–`bad_max`: A–B mph → “High Wind”
-    * `> bad_max`: → “Absolutely no fishing”
-  * **`thresholds.wind_gust.gusty`**: any gust > X mph → append “Gusty”
-  * **`thresholds.temp`**:
+2. **Weather Data Processing**
+   - Real-time weather data fetching
+   - Fishing condition analysis
+   - Data transformation and formatting
 
-    * `< cold_max` °F → append “Cold”
-    * `> hot_min` °F → append “Too Hot”
-    * otherwise → append “Comfortable Temp”
-  * **`thresholds.pressure`**: inHg threshold; `<` → append “Low Pressure”, otherwise → “High Pressure”
+## 🚀 Quick Start
 
----
+### Prerequisites
 
-## Prerequisites
+- Python 3.9+
+- pip (Python package manager)
 
-1. **Python 3.10+** (required for newer type hints used; tested on 3.10 and 3.11)
-2. **PIP** (for installing dependencies)
-3. **An OpenWeatherMap API key** (One Call API 3.0 enabled).
+### Installation
 
-   * Sign up at [OpenWeatherMap](https://openweathermap.org/) and enable the One Call 3.0 subscription.
-
----
-
-## Installation
-
-1. **Create a virtual environment (recommended)**:
-
+1. **Clone or navigate to the project directory**
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate      # macOS/Linux
-   # venv\Scripts\activate.bat   # Windows
+   cd fishing-weather
    ```
 
-2. **Install required packages**:
-
+2. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
----
-
-## Configuration
-
-1. **Populate `config.json`**
-
+3. **Configure your API key**
+   Edit `config.json` and add your OpenWeatherMap API key:
    ```json
    {
-     "api_key": "YOUR_OPENWEATHERMAP_API_KEY",
-     "output_dir": "/absolute/path/to/output"
+     "api_key": "your_openweathermap_api_key_here",
+     "output_dir": "./fishing-website"
    }
    ```
 
-   Replace `"YOUR_OPENWEATHERMAP_API_KEY"` with your actual key. `output_dir` is where `index.html` will be written.
-
-2. **Customize `settings.json`**
-
-   * Add or remove locations under `"locations"`.
-   * Adjust threshold values under `"thresholds"`.
-   * Ensure all numeric values (wind, gust, temp, pressure) match the units (mph for winds, °F for temp, inHg for pressure).
-
----
-
-## Usage
-
-Generate the HTML page at `output_dir/index.html`:
-
-```bash
-python fishing.py
-```
-
-Using the project venv explicitly:
-
-```bash
-fishing-weather/venv/bin/python fishing.py
-```
-
-What happens:
-
-1. Loads your API key and target output directory from `config.json`.
-2. Loads locations and thresholds from `settings.json`.
-3. Calls the One Call 3.0 API for each lake’s latitude/longitude.
-4. Computes fishing conditions per location and day.
-5. Writes a styled `index.html` grouped by date with a legend and per-row condition badge.
-
----
-
-## Sample Output
-
-```
-Location        Date                   Sunrise  Summary                                  Temp (°F)    Pressure (inHg)  Wind Speed (mph)  Wind Gust (mph)  Fishing                       
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-Winnipesaukee   Saturday 06-05-2025    05:09    partly cloudy with rain                63.81        29.88             12.55             17.05             Lite Wind (Gusty, Low Pressure)
-Winnipesaukee   Sunday 06-06-2025      05:09    clear sky                                 71.91        30.12             4.41              6.22              Lite Wind (Comfortable Temp, High Pressure)
-Newfound        Saturday 06-05-2025    05:12    mostly sunny                              65.10        29.95             7.30              9.50              Moderate Wind (Comfortable Temp, High Pressure)
-... (additional rows for each lake & date)
-```
-
----
-
-## Automating Updates
-
-If you want periodic updates:
-
-1. **GitHub Actions**
-
-   - Create a workflow that:
-     1. Checks out the repo
-     2. Installs Python and `requests`
-     3. Runs `python fishing.py`
-     4. Commits the generated `index.html` in your chosen `output_dir`
-   - Consider pointing `output_dir` to a `docs/` folder in your repo and enable GitHub Pages to serve from `docs`.
-
-2. **Local cron job**
-
-   - Example crontab entry (hourly):
-
-     ```
-     0 * * * * /path/to/venv/bin/python /path/to/fishing.py >> /path/to/fishing.log 2>&1
-     ```
-
----
-
-## Logging
-
-Structured logging is enabled. Control verbosity with the `LOG_LEVEL` environment variable (`DEBUG`, `INFO`, `WARNING`, `ERROR`).
-
-- macOS/Linux (zsh/bash):
-
-  ```bash
-  LOG_LEVEL=DEBUG python fishing.py
-  ```
-
-- PowerShell:
-
-  ```powershell
-  $env:LOG_LEVEL='DEBUG'; python fishing.py
-  ```
-
----
-
-## Optional: Push Results to Google Sheets
-
-If you prefer hosting in a Google Sheet and embedding in Google Sites:
-
-1. **Enable Google Sheets API**
-
-   * In Google Cloud Console, enable “Google Sheets API.”
-   * Create a Service Account (JSON key), name it e.g. `gcp-sa-credentials.json`.
-   * Share your target Google Sheet with the service-account email.
-
-2. **Install dependencies**:
-
+4. **Start the API server**
    ```bash
-   pip install gspread google-auth
+   python app.py
    ```
 
-3. **Add to `fishing.py`** (after building `all_rows`):
+5. **Access the portal**
+   Open your browser and navigate to:
+   - Main Portal: `http://localhost:5000`
+   - Weather Module: `http://localhost:5000/weather-module`
+   - Weather Widget: `http://localhost:5000/weather-widget`
 
-   ```python
-   import gspread
-   from google.oauth2.service_account import Credentials
+## 📊 API Endpoints
 
-   SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-   creds = Credentials.from_service_account_file("gcp-sa-credentials.json", scopes=SCOPES)
-   gc = gspread.authorize(creds)
+### Weather Data
 
-   SPREADSHEET_ID = "YOUR_SPREADSHEET_ID"
-   sh = gc.open_by_key(SPREADSHEET_ID)
-   try:
-       ws = sh.worksheet("Forecast")
-   except gspread.WorksheetNotFound:
-       ws = sh.add_worksheet(title="Forecast", rows="100", cols="20")
+- `GET /api/weather` - Get all weather data
+- `GET /api/forecast?location=<location>` - Get forecast for specific location
+- `GET /api/locations` - Get all available locations
+- `GET /weather-data.json` - Static weather data (fallback)
 
-   header = ["Location","Date","Sunrise","Summary","Temp (°F)","Pressure (inHg)","Wind Speed (mph)","Wind Gust (mph)","Fishing"]
-   values = [header]
-   for row in all_rows:
-       values.append([
-           row["location"],
-           row["date_str"],
-           row["sunrise"],
-           row["summary"],
-           row["temp"],
-           row["pressure"],
-           row["wind_speed"],
-           row["wind_gust"],
-           row["fishing"],
-       ])
+### Health & Status
 
-   ws.clear()
-   ws.update("A1", values)
-   print("Pushed forecast to Google Sheets.")
-   ```
+- `GET /api/health` - API health check
 
-4. Run the script each hour (cron/Action). The embedded Sheet in Google Sites (or shared link) will automatically reflect the latest data.
+## 🔧 Configuration
 
----
+### Weather Thresholds
 
-## Tips & Troubleshooting
+Edit `settings.json` to customize fishing condition thresholds:
 
-* **HTTP 401 Unauthorized**: Ensure your OpenWeatherMap API key is valid and has One Call permissions.
-* **Missing Data**: If a field (e.g. `wind_gust`) is absent, the script defaults it to `0`. Adjust logic if needed.
-* **Empty or Invalid `settings.json`**: Make sure every location has both `"lat"` and `"lon"` as strings or numbers.
-* **GitHub Actions Failing**: Check that your repository includes `config.json` (with a valid key) and, if using Sheets, `gcp-sa-credentials.json` (set as a secret).
-* **Table Alignment**: The script uses fixed-width f-strings (e.g. `:<18`). If numeric values have varying lengths, columns may shift slightly. Adjust widths to your preference.
+```json
+{
+  "thresholds": {
+    "wind_speed": {
+      "great": 5,
+      "good_min": 5.1,
+      "good_max": 8,
+      "bad_min": 8.1,
+      "bad_max": 10
+    },
+    "wind_gust": {
+      "gusty": 15
+    },
+    "temp": {
+      "cold_max": 50,
+      "hot_min": 80
+    },
+    "pressure": 29.92
+  }
+}
+```
 
----
+### Locations
 
-## License
+Add or modify fishing locations in `settings.json`:
 
-This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+```json
+{
+  "locations": {
+    "Location Name": {
+      "lat": "43.6406",
+      "lon": "-72.1440"
+    }
+  }
+}
+```
 
----
+## 🎨 Customization
 
-Feel free to adapt thresholds, add or remove lakes, and extend the script (e.g. push to CSV, send an email alert if “Absolutely no fishing” occurs, etc.). Tight lines and happy coding!
+### Styling
+
+The portal uses CSS custom properties for easy theming. Key variables:
+
+```css
+:root {
+  --primary-color: #2563eb;
+  --secondary-color: #1e40af;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+}
+```
+
+### Embedding Weather Components
+
+#### Weather Module
+
+```html
+<iframe src="http://localhost:5000/weather-module" 
+        width="100%" 
+        height="600px" 
+        frameborder="0">
+</iframe>
+```
+
+#### Weather Widget
+
+```html
+<iframe src="http://localhost:5000/weather-widget" 
+        width="400px" 
+        height="300px" 
+        frameborder="0">
+</iframe>
+```
+
+## 🔄 Data Flow
+
+1. **Data Collection**: Python script fetches weather data from OpenWeatherMap API
+2. **Processing**: Data is processed and fishing conditions are calculated
+3. **Caching**: Processed data is cached for 5 minutes to reduce API calls
+4. **API Serving**: Flask API serves data to frontend components
+5. **Frontend Display**: JavaScript components render and filter the data
+
+## 🛠️ Development
+
+### Project Structure
+
+```
+fishing-weather/
+├── app.py                 # Flask API server
+├── fishing.py            # Core weather processing logic
+├── config.json           # API configuration
+├── settings.json         # Locations and thresholds
+├── requirements.txt      # Python dependencies
+├── fishing-website/      # Frontend components
+│   ├── index.html        # Main portal
+│   ├── weather-module.html  # Standalone weather module
+│   ├── weather-widget.html  # Embeddable widget
+│   └── js/
+│       └── weather-api.js   # JavaScript API module
+└── README.md             # This file
+```
+
+### Adding New Features
+
+1. **New Weather Component**: Create new HTML file in `fishing-website/`
+2. **API Endpoint**: Add new route in `app.py`
+3. **Data Processing**: Extend functions in `fishing.py`
+4. **Frontend Logic**: Add JavaScript in appropriate component
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+1. **API Key Error**
+   - Ensure your OpenWeatherMap API key is valid
+   - Check `config.json` for correct key format
+
+2. **Port Already in Use**
+   - Change port in `app.py` line 150
+   - Or kill existing process using port 5000
+
+3. **CORS Issues**
+   - Ensure Flask-CORS is installed
+   - Check browser console for CORS errors
+
+4. **Data Not Loading**
+   - Check API server is running
+   - Verify network connectivity
+   - Check browser console for errors
+
+### Logs
+
+The application logs to console with different levels:
+- `INFO`: General information
+- `DEBUG`: Detailed debugging information
+- `WARNING`: Non-critical issues
+- `ERROR`: Critical errors
+
+## 📈 Performance
+
+- **Caching**: 5-minute cache reduces API calls
+- **Compression**: Gzip compression for faster loading
+- **CDN**: Font Awesome and Google Fonts loaded from CDN
+- **Lazy Loading**: Data loaded on demand
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🎣 Happy Fishing!
+
+Enjoy your new interactive fishing information portal! 🐟
