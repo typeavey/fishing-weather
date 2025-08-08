@@ -1,6 +1,6 @@
 # 🎣 Fishing Weather Portal
 
-A modern, interactive fishing weather portal with real-time weather data, historical analysis, and SQLite database integration.
+A modern, interactive fishing weather portal with real-time weather data, historical analysis, SQLite database integration, and SSL/HTTPS support.
 
 ## 🚀 Quick Start
 
@@ -17,25 +17,32 @@ cd fishing-weather
 ./start-portal.sh
 ```
 
-### Production Deployment (Rocky Linux)
+### Production Deployment (Rocky Linux with SSL/HTTPS)
 ```bash
 # Clone to production server
-git clone <your-repo-url> /opt/fishing-weather
-cd /opt/fishing-weather
+git clone <your-repo-url> /home/typeavey/fishing-weather
+cd /home/typeavey/fishing-weather
 
-# Deploy to production
-./deploy-production.sh
+# Check SSL configuration (if you have existing SSL)
+./check-ssl-config.sh
 
-# Start in production mode
-./start-production.sh
+# Deploy to production with SSL support
+./setup-production.sh
 ```
 
 ## 🌐 Access the Portal
 
+### Local Development
 - **Main Portal**: http://localhost:5000
 - **Weather Page**: http://localhost:5000/weather.html
 - **Locations Page**: http://localhost:5000/locations.html
 - **Forecast Page**: http://localhost:5000/forecast.html
+
+### Production (with SSL/HTTPS)
+- **Main Portal**: https://fishing.thepeaveys.net
+- **Weather Page**: https://fishing.thepeaveys.net/weather.html
+- **Locations Page**: https://fishing.thepeaveys.net/locations.html
+- **Forecast Page**: https://fishing.thepeaveys.net/forecast.html
 
 ## 🗄️ Database Features
 
@@ -51,15 +58,42 @@ cd /opt/fishing-weather
 - **Fishing Conditions**: `GET /api/fishing/conditions?location=Winnipesaukee&days=30`
 - **Health Check**: `GET /api/health` (includes database status)
 
+## 🔒 SSL/HTTPS Support
+
+### Production SSL Configuration
+The portal is configured to work with your existing SSL setup:
+
+- **Automatic HTTPS redirect**: All HTTP traffic is redirected to HTTPS
+- **Security headers**: HSTS, X-Content-Type-Options, X-Frame-Options, X-XSS-Protection
+- **SSL certificate support**: Works with Let's Encrypt, self-signed, or commercial certificates
+
+### SSL Certificate Locations
+The setup script looks for SSL certificates in these common locations:
+- **Certificate**: `/etc/ssl/certs/fishing.thepeaveys.net.crt` or `/etc/letsencrypt/live/fishing.thepeaveys.net/cert.pem`
+- **Private Key**: `/etc/ssl/private/fishing.thepeaveys.net.key` or `/etc/letsencrypt/live/fishing.thepeaveys.net/privkey.pem`
+- **Chain Certificate**: `/etc/ssl/certs/fishing.thepeaveys.net.chain.crt` (optional)
+
+### SSL Setup Commands
+```bash
+# Check your existing SSL configuration
+./check-ssl-config.sh
+
+# Install SSL certificate with Let's Encrypt (if needed)
+sudo certbot --apache -d fishing.thepeaveys.net
+
+# Deploy with SSL support
+./setup-production.sh
+```
+
 ## 🛠️ Management Tools
 
 ### Scripts
 - `./deploy.sh` - Local deployment
-- `./deploy-production.sh` - Production deployment
+- `./setup-production.sh` - Production deployment with SSL
 - `./start-portal.sh` - Start portal (development)
-- `./start-production.sh` - Start portal (production)
 - `./backup-database.sh` - Backup database
-- `./test_deployment.py` - Test deployment
+- `./check-ssl-config.sh` - Check SSL configuration
+- `./update-deployment.sh` - Production updates
 
 ### Database Management
 ```bash
@@ -93,91 +127,73 @@ python3 working_database.py
 ### Prerequisites
 - Python 3.9+
 - Git
-- Port 5000 available
-- Firewall configured (if needed)
+- Apache with mod_ssl
+- SSL certificates (Let's Encrypt or existing)
+- Port 5000 available (internal)
+- Firewall configured for HTTP/HTTPS
 
 ### Quick Production Setup
 ```bash
-# 1. Install system dependencies
-sudo dnf update -y
-sudo dnf install -y python3 python3-pip python3-devel git
+# 1. Check SSL configuration
+./check-ssl-config.sh
 
-# 2. Clone and deploy
-git clone <your-repo-url> /opt/fishing-weather
-cd /opt/fishing-weather
-./deploy-production.sh
+# 2. Deploy to production
+./setup-production.sh
 
-# 3. Configure firewall
-sudo firewall-cmd --permanent --add-port=5000/tcp
-sudo firewall-cmd --reload
-
-# 4. Start the portal
-./start-production.sh
+# 3. Verify deployment
+curl -k https://fishing.thepeaveys.net/api/health
 ```
 
-### Systemd Service (Optional)
+## 🔄 Updates and Maintenance
+
+### Automated Updates
 ```bash
-# Create service file
-sudo tee /etc/systemd/system/fishing-weather.service << EOF
-[Unit]
-Description=Fishing Weather Portal
-After=network.target
+# Update the portal
+./update-deployment.sh
+```
 
-[Service]
-Type=simple
-User=fishing-weather
-Group=fishing-weather
-WorkingDirectory=/opt/fishing-weather
-Environment=PATH=/opt/fishing-weather/venv/bin
-ExecStart=/opt/fishing-weather/venv/bin/python3 app.py
-Restart=always
-RestartSec=10
+### Manual Updates
+```bash
+# Pull latest changes
+git pull origin main
 
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# Create user and start service
-sudo useradd -r -s /bin/false fishing-weather
-sudo chown -R fishing-weather:fishing-weather /opt/fishing-weather
-sudo systemctl daemon-reload
-sudo systemctl enable fishing-weather
-sudo systemctl start fishing-weather
+# Restart services
+sudo systemctl restart fishing-weather httpd
 ```
 
 ## 🎯 Key Features
 
-1. **Real-time Weather**: Live weather data with 5-minute caching
-2. **Historical Data**: Access to past weather conditions
+1. **Real-time Weather Data**: Automatically fetched and cached
+2. **Historical Data**: All weather data stored in SQLite database
 3. **Fishing Analysis**: Enhanced fishing condition tracking
-4. **Location Comparison**: Compare conditions across locations
-5. **Trend Analysis**: Identify weather patterns over time
+4. **Interactive Interface**: Modern, responsive web design
+5. **API Access**: RESTful API for data integration
 6. **Mobile Responsive**: Works on all devices
-7. **API Access**: RESTful API for data integration
-8. **Database Storage**: SQLite database for data persistence
-9. **Production Ready**: Configured for Rocky Linux deployment
+7. **SSL/HTTPS Support**: Secure production deployment
+8. **Automatic Backups**: Database backup functionality
 
-## 📈 Performance
+## 🚨 Troubleshooting
 
-- **Startup Time**: <5 seconds
-- **Query Response**: <500ms
-- **Data Storage**: 57 records in ~50KB
-- **Memory Usage**: Low (~50MB for 100,000 records)
-- **Concurrent Users**: 1 writer, multiple readers
+### Common Issues
 
-## 🔒 Security
+1. **Port 5000 in use**: Change port in `app.py` or kill existing process
+2. **Database errors**: Check file permissions on `weather_data.db`
+3. **Import errors**: Ensure virtual environment is activated
+4. **SSL errors**: Run `./check-ssl-config.sh` to diagnose SSL issues
+5. **Apache errors**: Check Apache logs at `/var/log/httpd/fishing-weather-ssl-error.log`
 
-- **Production Mode**: Debug disabled, threading enabled
-- **Environment Variables**: Configurable via .env files
-- **File Permissions**: Proper permissions for production
-- **Firewall**: Port 5000 configuration
-- **Logging**: Comprehensive logging for debugging
+### Logs
+- Application logs: `sudo journalctl -u fishing-weather -f`
+- Apache access logs: `sudo tail -f /var/log/httpd/fishing-weather-ssl-access.log`
+- Apache error logs: `sudo tail -f /var/log/httpd/fishing-weather-ssl-error.log`
 
-## 🎣 Happy Fishing!
+## 📈 Scaling
 
-Your fishing weather portal is now **fully operational** with database storage, historical data access, and enhanced fishing analysis capabilities!
+When you need to scale beyond SQLite:
+1. **100,000+ records**: Consider PostgreSQL
+2. **Multiple users**: Consider PostgreSQL
+3. **Advanced analytics**: Consider PostgreSQL
 
-**🌐 Portal**: http://localhost:5000  
-**🗄️ Database**: SQLite (weather_data.db)  
-**📊 Records**: 57 weather records stored  
-**🎯 Status**: Production Ready!
+## 🎉 Enjoy Your Fishing Portal!
+
+Your fishing weather portal is now fully operational with database storage and SSL/HTTPS support!
