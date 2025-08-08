@@ -6,82 +6,66 @@ Your fishing weather portal has been successfully deployed with SQLite database 
 
 ## 🚀 Quick Start
 
-### Start the Portal
+### Production Deployment
 ```bash
-./start-portal.sh
+./deploy-production.sh
 ```
 
-### Access the Portal
+### Development Deployment
+```bash
+./deploy.sh
+```
+
+## 🌐 Access URLs
+
+### Production (Recommended)
+- **Main Portal**: https://fishing.thepeaveys.net
+- **Weather Page**: https://fishing.thepeaveys.net/weather.html
+- **Locations Page**: https://fishing.thepeaveys.net/locations.html
+- **Forecast Page**: https://fishing.thepeaveys.net/forecast.html
+
+### Development
 - **Main Portal**: http://localhost:5000
 - **Weather Page**: http://localhost:5000/weather.html
 - **Locations Page**: http://localhost:5000/locations.html
 - **Forecast Page**: http://localhost:5000/forecast.html
 
-## 🗄️ Database Features
+## 📊 Service Management
 
-### New API Endpoints
-- **Historical Data**: `GET /api/weather/history?location=Winnipesaukee&days=30`
-- **Statistics**: `GET /api/weather/statistics`
-- **Fishing Conditions**: `GET /api/fishing/conditions?location=Winnipesaukee&days=30`
+### Check Status
+```bash
+sudo systemctl status fishing-weather
+```
 
-### Database Management
-- **Backup Database**: `./backup-database.sh`
-- **Database File**: `weather_data.db`
-- **Automatic Storage**: Weather data is automatically stored when fetched
+### Restart Service
+```bash
+sudo systemctl restart fishing-weather
+```
 
-## 📊 Data Storage
-
-- **Current Data**: 7 locations × 8 days = 56 records per fetch
-- **Annual Storage**: ~2,555 records/year
-- **Database Size**: ~50MB for 100,000 records
-- **Performance**: Excellent for your data volume
-
-## 🔧 Maintenance
+### View Logs
+```bash
+sudo journalctl -u fishing-weather -f
+```
 
 ### Backup Database
 ```bash
 ./backup-database.sh
 ```
 
-### View Database Statistics
-```bash
-python3 -c "from working_database import WorkingWeatherDatabase; db = WorkingWeatherDatabase(); print(db.get_statistics())"
-```
+## 🔧 Configuration Files
 
-### Reset Database (if needed)
-```bash
-rm weather_data.db
-python3 working_database.py
-```
+- **Application**: `/home/typeavey/fishing-weather/app.py`
+- **Database**: `/home/typeavey/fishing-weather/weather_data.db`
+- **Settings**: `/home/typeavey/fishing-weather/settings.json`
+- **Apache Config**: `/etc/httpd/conf.d/fishing-weather.conf`
 
-## 🎯 Key Features
+## 🎯 Next Steps
 
-1. **Real-time Weather Data**: Automatically fetched and cached
-2. **Historical Data**: All weather data stored in SQLite database
-3. **Fishing Analysis**: Enhanced fishing condition tracking
-4. **Interactive Interface**: Modern, responsive web design
-5. **API Access**: RESTful API for data integration
-6. **Mobile Responsive**: Works on all devices
+1. **Test the portal**: Visit https://fishing.thepeaveys.net
+2. **Monitor logs**: Check application and Apache logs
+3. **Set up monitoring**: Consider setting up monitoring alerts
+4. **Regular backups**: Schedule regular database backups
 
-## 🚨 Troubleshooting
+## 🎣 Happy Fishing!
 
-### Common Issues
-
-1. **Port 5000 in use**: Change port in `app.py` or kill existing process
-2. **Database errors**: Check file permissions on `weather_data.db`
-3. **Import errors**: Ensure virtual environment is activated
-
-### Logs
-- Application logs are displayed in the terminal
-- Database operations are logged automatically
-
-## 📈 Scaling
-
-When you need to scale beyond SQLite:
-1. **100,000+ records**: Consider PostgreSQL
-2. **Multiple users**: Consider PostgreSQL
-3. **Advanced analytics**: Consider PostgreSQL
-
-## 🎉 Enjoy Your Fishing Portal!
-
-Your fishing weather portal is now fully operational with database storage!
+Your fishing weather portal is now ready for production use!

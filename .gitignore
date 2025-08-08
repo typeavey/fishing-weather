@@ -86,3 +86,35 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+
+# Production-specific files
+backups/
+*.log
+*.db
+__pycache__/
+*.pyc
+.env
+
+# SSL certificates (if accidentally committed)
+*.crt
+*.key
+*.pem
+
+# Additional cleanup
+*.pyc
+*.pyo
+__pycache__/
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
