@@ -5,6 +5,23 @@ import logging
 import requests
 from typing import Union, List, Dict, Tuple
 
+# Import enhanced fishing analysis
+try:
+    from enhanced_fishing_analysis import EnhancedFishingAnalysis
+except ImportError:
+    # If not available, create a simple fallback
+    class EnhancedFishingAnalysis:
+        def __init__(self, thresholds=None):
+            self.thresholds = thresholds or {}
+        
+        def analyze_fishing_conditions(self, weather_data):
+            # Fallback to original logic
+            return {
+                'fishing_rating': 'Good Fishing',
+                'fishing_base': 'Good Fishing',
+                'overall_score': 70,
+                'detailed_summary': 'Standard fishing conditions'
+            }
 
 logger = logging.getLogger("fishing_forecast")
 
@@ -65,21 +82,49 @@ def load_settings(settings_path: str = "settings.json") -> Tuple[Dict, Dict]:
 
 
 def extract_thresholds(thresholds: dict) -> dict:
-    wind_speed_thresholds = thresholds.get("wind_speed", {})
-    gust_thresholds = thresholds.get("wind_gust", {})
-    temp_thresholds = thresholds.get("temp", {})
+    """
+    Extract thresholds for both enhanced and legacy analysis
+    """
+    # Check if we have enhanced thresholds
+    if "wind_speed" in thresholds and "excellent" in thresholds["wind_speed"]:
+        # Enhanced thresholds structure
+        th = {
+            # Enhanced thresholds
+            "wind_speed": thresholds.get("wind_speed", {}),
+            "wind_gust": thresholds.get("wind_gust", {}),
+            "temperature": thresholds.get("temperature", {}),
+            "pressure": thresholds.get("pressure", {}),
+            "moon_phase": thresholds.get("moon_phase", {}),
+            
+            # Legacy thresholds for backward compatibility
+            "wind_great": float(thresholds.get("wind_speed", {}).get("great", 5)),
+            "wind_good_min": float(thresholds.get("wind_speed", {}).get("good", 8)),
+            "wind_good_max": float(thresholds.get("wind_speed", {}).get("moderate", 12)),
+            "wind_bad_min": float(thresholds.get("wind_speed", {}).get("challenging", 15)),
+            "wind_bad_max": float(thresholds.get("wind_speed", {}).get("difficult", 20)),
+            "gust_gusty": float(thresholds.get("wind_gust", {}).get("moderate", 15)),
+            "temp_cold": float(thresholds.get("temperature", {}).get("cold", 40)),
+            "temp_hot": float(thresholds.get("temperature", {}).get("hot", 95)),
+            "pressure_threshold": float(thresholds.get("pressure", {}).get("normal", 30.20)),
+        }
+    else:
+        # Legacy thresholds structure
+        wind_speed_thresholds = thresholds.get("wind_speed", {})
+        gust_thresholds = thresholds.get("wind_gust", {})
+        temp_thresholds = thresholds.get("temp", {})
 
-    th = {
-        "wind_great": float(wind_speed_thresholds.get("great", 5)),
-        "wind_good_min": float(wind_speed_thresholds.get("good_min", 6)),
-        "wind_good_max": float(wind_speed_thresholds.get("good_max", 8)),
-        "wind_bad_min": float(wind_speed_thresholds.get("bad_min", 9)),
-        "wind_bad_max": float(wind_speed_thresholds.get("bad_max", 10)),
-        "gust_gusty": float(gust_thresholds.get("gusty", 15)),
-        "temp_cold": float(temp_thresholds.get("cold_max", 50)),
-        "temp_hot": float(temp_thresholds.get("hot_min", 85)),
-        "pressure_threshold": float(thresholds.get("pressure", 29.92)),
-    }
+        th = {
+            "wind_great": float(wind_speed_thresholds.get("great", 5)),
+            "wind_good_min": float(wind_speed_thresholds.get("good_min", 6)),
+            "wind_good_max": float(wind_speed_thresholds.get("good_max", 8)),
+            "wind_bad_min": float(wind_speed_thresholds.get("bad_min", 9)),
+            "wind_bad_max": float(wind_speed_thresholds.get("bad_max", 10)),
+            "gust_gusty": float(gust_thresholds.get("gusty", 15)),
+            "temp_cold": float(temp_thresholds.get("cold_max", 50)),
+            "temp_hot": float(temp_thresholds.get("hot_min", 85)),
+            "pressure_threshold": float(thresholds.get("pressure", 29.92)),
+        }
+    
     logger.debug("Thresholds: %s", th)
     return th
 
@@ -112,7 +157,36 @@ def determine_fishing_labels(
     temp_day: Union[float, None],
     pressure_in: Union[float, None],
     th: dict,
+    weather_data: Dict = None,
 ) -> Tuple[str, str]:
+    """
+    Determine fishing labels using enhanced analysis if available
+    Falls back to original logic if enhanced analysis is not available
+    """
+    # If we have full weather data, use enhanced analysis
+    if weather_data and 'wind_deg' in weather_data:
+        try:
+            # Initialize enhanced analysis with thresholds
+            enhanced_analysis = EnhancedFishingAnalysis(th)
+            analysis = enhanced_analysis.analyze_fishing_conditions(weather_data)
+            
+            # Return enhanced results
+            fishing_base = analysis['fishing_base']
+            detailed_summary = analysis['detailed_summary']
+            
+            # Add recommendations if available
+            if 'recommendations' in analysis and analysis['recommendations']:
+                recommendations = ' | '.join(analysis['recommendations'])
+                fishing = f"{fishing_base} | {detailed_summary} | Tips: {recommendations}"
+            else:
+                fishing = f"{fishing_base} | {detailed_summary}"
+            
+            return fishing_base, fishing
+            
+        except Exception as e:
+            logger.warning(f"Enhanced analysis failed, falling back to original logic: {e}")
+    
+    # Fallback to original logic
     # Base label from wind speed
     if wind_speed is None:
         fishing_base = ""
@@ -198,8 +272,9 @@ def build_rows_for_location(
         wind_speed = day_data.get("wind_speed")
         wind_gust = day_data.get("wind_gust", 0)
 
+        # Use enhanced analysis with full weather data
         fishing_base, fishing = determine_fishing_labels(
-            wind_speed, wind_gust, temp_day, pressure_in, th
+            wind_speed, wind_gust, temp_day, pressure_in, th, day_data
         )
 
         rows.append(
