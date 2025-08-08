@@ -36,6 +36,15 @@ except ImportError:
         group_rows_by_date
     )
 
+# Import database
+try:
+    from working_database import WorkingWeatherDatabase
+except ImportError:
+    # If running from a different directory, add the current directory to path
+    import sys
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from working_database import WorkingWeatherDatabase
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
@@ -47,6 +56,9 @@ logger = logging.getLogger("fishing_api")
 weather_cache = {}
 cache_timestamp = None
 CACHE_DURATION = 300  # 5 minutes
+
+# Initialize database
+db = WorkingWeatherDatabase()
 
 def get_cached_weather_data():
     """Get weather data from cache or generate new data"""
@@ -73,6 +85,14 @@ def get_cached_weather_data():
         for location_name, coords in locations.items():
             rows = build_rows_for_location(location_name, coords, api_key, th)
             all_rows.extend(rows)
+        
+        # Store data in database
+        if all_rows:
+            try:
+                db.store_weather_data(all_rows)
+                logger.info(f"Stored {len(all_rows)} weather records in database")
+            except Exception as e:
+                logger.warning(f"Failed to store data in database: {e}")
         
         # Update cache
         weather_cache = all_rows
@@ -144,8 +164,67 @@ def api_health():
     return jsonify({
         "status": "healthy",
         "timestamp": datetime.datetime.now().isoformat(),
-        "cache_age": (datetime.datetime.now() - cache_timestamp).seconds if cache_timestamp else None
+        "cache_age": (datetime.datetime.now() - cache_timestamp).seconds if cache_timestamp else None,
+        "database": "sqlite"
     })
+
+@app.route('/api/weather/history')
+def weather_history():
+    """Get historical weather data from database"""
+    try:
+        location = request.args.get('location')
+        days_back = int(request.args.get('days', 30))
+        limit = int(request.args.get('limit', 100))
+        
+        start_date = datetime.datetime.now() - datetime.timedelta(days=days_back)
+        
+        data = db.get_weather_data(
+            location=location,
+            start_date=start_date,
+            limit=limit
+        )
+        
+        return jsonify({
+            "data": data,
+            "count": len(data),
+            "location": location,
+            "days_back": days_back
+        })
+    except Exception as e:
+        logger.error(f"Error in /api/weather/history: {e}")
+        return jsonify({"error": "Failed to fetch historical weather data"}), 500
+
+@app.route('/api/weather/statistics')
+def weather_statistics():
+    """Get weather statistics from database"""
+    try:
+        stats = db.get_statistics()
+        return jsonify(stats)
+    except Exception as e:
+        logger.error(f"Error in /api/weather/statistics: {e}")
+        return jsonify({"error": "Failed to fetch weather statistics"}), 500
+
+@app.route('/api/fishing/conditions')
+def fishing_conditions():
+    """Get fishing conditions history"""
+    try:
+        location = request.args.get('location')
+        days_back = int(request.args.get('days', 30))
+        
+        data = db.get_fishing_conditions(
+            location=location,
+            days_back=days_back
+        )
+        
+        return jsonify({
+            "data": data,
+            "count": len(data),
+            "location": location,
+            "days_back": days_back
+        })
+    except Exception as e:
+        logger.error(f"Error in /api/fishing/conditions: {e}")
+        return jsonify({"error": "Failed to fetch fishing conditions"}), 500
 
 @app.route('/weather-data.json')
 def weather_data_json():
@@ -193,9 +272,14 @@ if __name__ == '__main__':
     logger.info("Starting Fishing Weather API Server")
     get_cached_weather_data()
     
+    # Check if running in production
+    import os
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    
     # Run the Flask app
     app.run(
         host='0.0.0.0',
-        port=5000,
-        debug=True
+        port=int(os.environ.get('PORT', 5000)),
+        debug=debug_mode,
+        threaded=True  # Enable threading for production
     )
