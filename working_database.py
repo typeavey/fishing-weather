@@ -15,6 +15,38 @@ class WorkingWeatherDatabase:
     def __init__(self, db_path: str = "weather_data.db"):
         """Initialize SQLite database for weather data"""
         self.db_path = db_path
+        self._create_tables()
+    
+    def _create_tables(self):
+        """Create database tables if they don't exist"""
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                
+                # Create weather_data table
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS weather_data (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        location TEXT NOT NULL,
+                        date_ts INTEGER,
+                        date_str TEXT,
+                        sunrise TEXT,
+                        summary TEXT,
+                        temp_day REAL,
+                        pressure REAL,
+                        wind_speed REAL,
+                        wind_gust REAL,
+                        fishing_base TEXT,
+                        fishing_rating TEXT,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )
+                """)
+                
+                conn.commit()
+                logger.info("Weather database tables initialized")
+                
+        except Exception as e:
+            logger.error(f"Error creating database tables: {e}")
     
     def store_weather_data(self, weather_records: List[Dict[str, Any]]) -> bool:
         """Store weather data in the database"""
