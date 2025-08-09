@@ -600,6 +600,7 @@
             document.getElementById('updateForecastBtn').addEventListener('click', loadForecastData);
             document.getElementById('locationSelect').addEventListener('change', filterData);
             document.getElementById('conditionSelect').addEventListener('change', filterData);
+            document.getElementById('dateRangeSelect').addEventListener('change', filterData);
         }
 
         // Load forecast data
@@ -718,11 +719,27 @@
         function filterData() {
             const locationFilter = document.getElementById('locationSelect').value;
             const conditionFilter = document.getElementById('conditionSelect').value;
+            const dateRangeFilter = document.getElementById('dateRangeSelect').value;
 
             filteredData = forecastData.filter(item => {
                 const locationMatch = !locationFilter || item.location === locationFilter;
                 const conditionMatch = !conditionFilter || item.fishing_base === conditionFilter;
-                return locationMatch && conditionMatch;
+                
+                // Date range filter logic
+                let dateRangeMatch = true;
+                if (dateRangeFilter) {
+                    const today = new Date();
+                    const itemDate = new Date(item.date);
+                    const dayDiff = Math.floor((itemDate - today) / (1000 * 60 * 60 * 24));
+                    const maxDays = parseInt(dateRangeFilter);
+                    
+                    // Only show items within the selected date range
+                    if (dayDiff < 0 || dayDiff >= maxDays) {
+                        dateRangeMatch = false;
+                    }
+                }
+                
+                return locationMatch && conditionMatch && dateRangeMatch;
             });
 
             renderForecastData();
