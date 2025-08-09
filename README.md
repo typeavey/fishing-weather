@@ -19,6 +19,10 @@ sudo systemctl status fishing-weather
 git clone <your-repo-url>
 cd fishing-weather
 
+# Copy and configure the config file
+cp config.json.template config.json
+# Edit config.json and add your API key
+
 # Deploy locally
 ./deploy.sh
 
