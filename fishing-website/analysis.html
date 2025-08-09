@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishing Analysis - NH-VT Trolling Conditions</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background-color: var(--gray-50);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6, #60a5fa, #93c5fd);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                rgba(34, 197, 94, 0.1) 0%, 
+                rgba(59, 130, 246, 0.2) 25%, 
+                rgba(147, 51, 234, 0.1) 50%, 
+                rgba(236, 72, 153, 0.1) 75%, 
+                rgba(34, 197, 94, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo-image {
+            width: 48px;
+            height: 48px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            animation: fish-swim 3s ease-in-out infinite;
+        }
+
+        @keyframes fish-swim {
+            0% { transform: translateY(0px) rotate(0deg) scale(1); }
+            15% { transform: translateY(-6px) rotate(15deg) scale(1.05); }
+            30% { transform: translateY(-2px) rotate(-10deg) scale(1.02); }
+            45% { transform: translateY(-8px) rotate(20deg) scale(1.08); }
+            60% { transform: translateY(-1px) rotate(-5deg) scale(1.01); }
+            75% { transform: translateY(-5px) rotate(12deg) scale(1.04); }
+            90% { transform: translateY(-3px) rotate(-8deg) scale(1.03); }
+            100% { transform: translateY(0px) rotate(0deg) scale(1); }
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-subtitle {
+            font-size: 0.875rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: -2px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .nav-link:hover {
+            opacity: 0.8;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .page-subtitle {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* Analysis Controls */
+        .analysis-controls {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
+        }
+
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .controls-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .controls-form {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .form-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            background: white;
+            font-size: 0.875rem;
+            min-width: 150px;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Analysis Cards */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+        }
+
+        .analysis-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 2px solid var(--gray-200);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analysis-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .analysis-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 10px -2px rgba(0, 0, 0, 0.06);
+            border-color: var(--primary-color);
+        }
+
+        .lake-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-100);
+            position: relative;
+        }
+
+        .lake-name {
+            font-weight: 700;
+            color: var(--gray-900);
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .lake-status {
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-great {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-good {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-tough {
+            background: #fed7aa;
+            color: #c2410c;
+        }
+
+        .status-stay-home {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .analysis-content {
+            margin-bottom: 1.5rem;
+        }
+
+        .analysis-summary {
+            font-size: 1.125rem;
+            line-height: 1.7;
+            color: var(--gray-700);
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: var(--gray-50);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .conditions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .condition-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--gray-50);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .condition-label {
+            color: var(--gray-700);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.25px;
+            font-size: 0.875rem;
+        }
+
+        .condition-value {
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .fishing-recommendations {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fishing-recommendations::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+        }
+
+        .recommendations-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .recommendations-list {
+            list-style: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .recommendations-list li {
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .recommendations-list li::before {
+            content: '🎣';
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .spinner {
+            border: 2px solid var(--gray-200);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            text-align: center;
+            color: var(--danger-color);
+            padding: 1rem;
+            background: #fef2f2;
+            border-radius: 0.5rem;
+            border: 1px solid #fecaca;
+        }
+
+        .no-data {
+            text-align: center;
+            color: var(--gray-500);
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav {
+                gap: 1rem;
+            }
+
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .conditions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggMjRDMCAyNCA0IDI4IDggMjhDMTIgMjggMTYgMjQgMTYgMjRDMCAyNCA0IDIwIDggMjBaIiBmaWxsPSIjMDA0ZGIzIi8+CjxwYXRoIGQ9Ik0xNiAyNEMxNiAyNCAyMCAyOCAyNCAyOEMyOCAyOCAzMiAyNCAzMiAyNEMyOCAyNCAyNCAyMCAyMCAyMEMxNiAyMCAxNiAyNCAxNiAyNFoiIGZpbGw9IiMwMDQ5YjAiLz4KPHBhdGggZD0iTTMyIDI0QzMyIDI0IDM2IDI4IDQwIDI4QzQ0IDI4IDQ4IDI0IDQ4IDI0QzQ0IDIwIDQwIDIwIDM2IDIwQzMyIDIwIDMyIDI0IDMyIDI0WiIgZmlsbD0iIzAwNDliMCIvPgo8cGF0aCBkPSJNMTYgMjRMMjQgMjhMMzIgMjQiIHN0cm9rZT0iIzAwNDliMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Ik0xMiAyNEMxMiAyNCAxNCAyNiAxMiAyOEMxMCAzMCAxMiAzMiAxMiAzMiIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjEiLz4KPHBhdGggZD0iTTM2IDI0QzM2IDI0IDM0IDI2IDM2IDI4QzM4IDMwIDM2IDMyIDM2IDMyIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMjAgMzZDMjAgMzYgMjIgMzQgMjQgMzZDMjYgMzggMjggMzYgMjggMzYiIHN0cm9rZT0iIzAwNDliMCIgc3Ryb2tlLXdpZHRoPSIxIi8+CjxwYXRoIGQ9Ik0yNCAxMkMyNCAxMiAyNiAxNCAyNCAxNkMyMiAxOCAyNCAyMCAyNCAyMCIgc3Ryb2tlPSIjMDA0OWIwIiBzdHJva2Utd2lkdGg9IjEiLz4KPHBhdGggZD0iTTE2IDE2QzE2IDE2IDE4IDE4IDE2IDIwQzE0IDIyIDE2IDI0IDE2IDI0IiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMzIgMTZDMzIgMTYgMzAgMTggMzIgMjBDMzQgMjIgMzIgMjQgMzIgMjQiIHN0cm9rZT0iIzAwNDliMCIgc3Ryb2tlLXdpZHRoPSIxIi8+CjxwYXRoIGQ9Ik0yNCA0QzI0IDQgMjYgNiAyNCA4QzIyIDEwIDI0IDEyIDI0IDEyIiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMTYgOEMxNiA4IDE4IDEwIDE2IDEyQzE0IDE0IDE2IDE2IDE2IDE2IiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMzIgOEMzMiA4IDMwIDEwIDMyIDEyQzM0IDE0IDMyIDE2IDMyIDE2IiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N2Zz4K" alt="Rainbow Trout" class="logo-image">
+                    <div class="logo-text">
+                        <a href="/" style="color: white; text-decoration: none;">
+                            <div class="logo-title">NH-VT Trolling Conditions</div>
+                            <div class="logo-subtitle">Real-time Fishing Intelligence</div>
+                        </a>
+                    </div>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Dashboard</a>
+                    <a href="/weather.html" class="nav-link">Weather</a>
+                    <a href="/locations.html" class="nav-link">Locations</a>
+                    <a href="/forecast.html" class="nav-link">Forecast</a>
+                    <a href="/analysis.html" class="nav-link">Analysis</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <h1 class="page-title">🎣 Fishing Analysis</h1>
+            <p class="page-subtitle">Detailed fishing condition analysis and recommendations for NH-VT waters</p>
+
+            <!-- Analysis Controls -->
+            <div class="analysis-controls">
+                <div class="controls-header">
+                    <h2 class="controls-title">Analysis Filters</h2>
+                </div>
+                <div class="controls-form">
+                    <div class="form-group">
+                        <label for="locationFilter" class="form-label">Location</label>
+                        <select id="locationFilter" class="form-select">
+                            <option value="">All Locations</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="conditionFilter" class="form-label">Condition</label>
+                        <select id="conditionFilter" class="form-select">
+                            <option value="">All Conditions</option>
+                            <option value="Great">Great Fishing</option>
+                            <option value="Good">Good Fishing</option>
+                            <option value="Tough">Tough Fishing</option>
+                            <option value="Stay Home">Stay Home</option>
+                        </select>
+                    </div>
+                    <button id="refreshBtn" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh Analysis
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analysis Content -->
+            <div id="analysisContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Loading fishing analysis...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Analysis data structure
+        let analysisData = [];
+        let filteredAnalysis = [];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAnalysisData();
+            setupEventListeners();
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('refreshBtn').addEventListener('click', loadAnalysisData);
+            document.getElementById('locationFilter').addEventListener('change', filterAnalysis);
+            document.getElementById('conditionFilter').addEventListener('change', filterAnalysis);
+        }
+
+        // Load analysis data
+        async function loadAnalysisData() {
+            const analysisContent = document.getElementById('analysisContent');
+            analysisContent.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Loading fishing analysis...
+                </div>
+            `;
+
+            try {
+                // Fetch water temperature data
+                let waterTempData = {};
+                try {
+                    const waterTempResponse = await fetch('/api/water-temperature/latest');
+                    if (waterTempResponse.ok) {
+                        waterTempData = await waterTempResponse.json();
+                    }
+                } catch (waterTempError) {
+                    console.warn('Water temperature API not available:', waterTempError);
+                }
+
+                // Try to fetch from API first, fallback to static data
+                try {
+                    const response = await fetch('/api/weather');
+                    if (response.ok) {
+                        const weatherData = await response.json();
+                        analysisData = generateAnalysisData(weatherData, waterTempData);
+                    } else {
+                        throw new Error('API not available');
+                    }
+                } catch (apiError) {
+                    console.warn('API not available, using sample data:', apiError);
+                    analysisData = generateSampleAnalysisData(waterTempData);
+                }
+
+                filteredAnalysis = [...analysisData];
+                updateFilters();
+                renderAnalysisData();
+            } catch (error) {
+                analysisContent.innerHTML = `
+                    <div class="error-message">
+                        <p>Error loading analysis data. Please try again.</p>
+                        <button class="btn btn-primary" onclick="loadAnalysisData()">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Generate sample analysis data
+        function generateSampleAnalysisData(waterTempData = {}) {
+            const locations = [
+                'Winnipesaukee', 'Newfound', 'Squam', 'Champlain', 
+                'Mascoma', 'Sunapee', 'First Connecticut'
+            ];
+            
+            const conditions = [
+                { label: 'Great Fishing-Lite Wind', class: 'status-great', base: 'Great' },
+                { label: 'Good Fishing-Moderate Wind', class: 'status-good', base: 'Good' },
+                { label: 'Tough Fishing-High Wind', class: 'status-tough', base: 'Tough' },
+                { label: 'Stay Home No Fishing', class: 'status-stay-home', base: 'Stay Home' }
+            ];
+
+            // Sample water temperatures for August (realistic values)
+            const waterTemps = {
+                'Winnipesaukee': 68.6,
+                'Newfound': 65.3,
+                'Squam': 71.1,
+                'Champlain': 78.4,
+                'Mascoma': 80.9,
+                'Sunapee': 72.7,
+                'First Connecticut': 82.6
+            };
+
+            const data = [];
+            const today = new Date();
+
+            locations.forEach(location => {
+                const condition = conditions[Math.floor(Math.random() * conditions.length)];
+                const windSpeed = Math.floor(Math.random() * 15) + 1;
+                const windGust = windSpeed + Math.floor(Math.random() * 10);
+                const temp = Math.floor(Math.random() * 30) + 45;
+                const pressure = (Math.random() * 2 + 29.5).toFixed(2);
+                const humidity = Math.floor(Math.random() * 30) + 40;
+                const visibility = Math.floor(Math.random() * 5) + 5;
+                const waterTemp = waterTempData[location]?.temperature_fahrenheit || waterTemps[location] || 70;
+
+                data.push({
+                    location,
+                    condition: condition.label,
+                    condition_base: condition.base,
+                    status_class: condition.class,
+                    temp,
+                    pressure,
+                    wind_speed: windSpeed,
+                    wind_gust: windGust,
+                    humidity,
+                    visibility,
+                    water_temp: waterTemp,
+                    summary: generateLakeSummary(location, condition.base, temp, windSpeed, pressure, humidity, waterTemp),
+                    recommendations: generateRecommendations(condition.base, temp, windSpeed, pressure, humidity, waterTemp)
+                });
+            });
+
+            return data;
+        }
+
+        // Generate lake summary
+        function generateLakeSummary(location, condition, temp, windSpeed, pressure, humidity, waterTemp = null) {
+            const waterTempInfo = waterTemp ? ` Water temperature is ${waterTemp}°F, with salmonids likely holding in the thermocline zone (${waterTemp >= 70 ? '30-35 feet' : waterTemp >= 65 ? '25-30 feet' : '20-25 feet'}).` : '';
+            
+            const summaries = {
+                'Great': `Excellent fishing conditions at ${location}! The combination of moderate temperatures (${temp}°F), light winds (${windSpeed} mph), and stable atmospheric pressure (${pressure} inHg) creates ideal conditions for salmonid trolling.${waterTempInfo} The water clarity is excellent with ${humidity}% humidity, making it perfect for trolling. Expect active Rainbow Trout, Salmon, and Lake Trout throughout the day.`,
+                'Good': `Good fishing conditions at ${location}. With temperatures at ${temp}°F and winds at ${windSpeed} mph, conditions are favorable for salmonid trolling.${waterTempInfo} The pressure reading of ${pressure} inHg indicates stable weather, though you may need to adjust your trolling depth and speed slightly. Fish should be moderately active.`,
+                'Tough': `Challenging fishing conditions at ${location}. High winds (${windSpeed} mph) and ${temp}°F temperatures make trolling difficult.${waterTempInfo} The pressure of ${pressure} inHg suggests changing conditions. Consider fishing in protected areas or waiting for calmer weather. Focus on Lake Trout which are more tolerant of poor conditions.`,
+                'Stay Home': `Poor fishing conditions at ${location}. With ${temp}°F temperatures, high winds (${windSpeed} mph), and pressure at ${pressure} inHg, conditions are not suitable for safe trolling.${waterTempInfo} Consider rescheduling your trip for better weather or focus on shore fishing if conditions permit.`
+            };
+            
+            return summaries[condition] || summaries['Good'];
+        }
+
+        // Generate recommendations for salmonid trolling in large lakes
+        function generateRecommendations(condition, temp, windSpeed, pressure, humidity, waterTemp = null) {
+            // Determine thermocline depth based on water temperature
+            function getThermoclineDepth(waterTemp) {
+                if (!waterTemp) return 30; // Default if no water temp data
+                
+                if (waterTemp >= 75) return 35; // Deep thermocline in warm water
+                if (waterTemp >= 70) return 30; // Moderate thermocline
+                if (waterTemp >= 65) return 25; // Shallow thermocline
+                return 20; // Early season, shallow thermocline
+            }
+            
+            // Determine optimal trolling depth based on conditions
+            function getOptimalDepth(waterTemp, condition) {
+                const thermoclineDepth = getThermoclineDepth(waterTemp);
+                
+                if (condition === 'Great') {
+                    return `${thermoclineDepth - 5}-${thermoclineDepth + 5} feet`;
+                } else if (condition === 'Good') {
+                    return `${thermoclineDepth - 10}-${thermoclineDepth + 10} feet`;
+                } else {
+                    return `${thermoclineDepth - 15}-${thermoclineDepth + 15} feet`;
+                }
+            }
+            
+            // Determine trolling speed based on conditions
+            function getTrollingSpeed(condition, waterTemp) {
+                if (waterTemp && waterTemp >= 75) {
+                    // Warm water - fish are less active
+                    return condition === 'Great' ? '1.5-2.0 mph' : '1.0-1.5 mph';
+                } else if (waterTemp && waterTemp >= 70) {
+                    return condition === 'Great' ? '2.0-2.5 mph' : '1.5-2.0 mph';
+                } else {
+                    return condition === 'Great' ? '2.5-3.0 mph' : '2.0-2.5 mph';
+                }
+            }
+            
+            const thermoclineDepth = getThermoclineDepth(waterTemp);
+            const optimalDepth = getOptimalDepth(waterTemp, condition);
+            const trollingSpeed = getTrollingSpeed(condition, waterTemp);
+            
+            const recommendations = {
+                'Great': [
+                    `🎯 Target Depth: ${optimalDepth} (near thermocline at ${thermoclineDepth} feet)`,
+                    `⚡ Trolling Speed: ${trollingSpeed} for optimal salmonid response`,
+                    `🪱 Lure Selection: Use spoons and plugs in silver/blue patterns`,
+                    `📍 Location: Focus on drop-offs and underwater points`,
+                    `⏰ Timing: Early morning (5-8 AM) and evening (6-9 PM)`,
+                    waterTemp ? `🌡️ Water Temp: ${waterTemp}°F - fish are in thermocline zone` : '🌡️ Monitor water temperature for thermocline depth',
+                    `🎣 Technique: Use downriggers to maintain precise depth control`,
+                    `🐟 Target Species: Rainbow Trout, Salmon, Lake Trout`
+                ],
+                'Good': [
+                    `🎯 Target Depth: ${optimalDepth} (thermocline at ${thermoclineDepth} feet)`,
+                    `⚡ Trolling Speed: ${trollingSpeed} - adjust based on fish response`,
+                    `🪱 Lure Selection: Mix of spoons, plugs, and flasher/fly combinations`,
+                    `📍 Location: Try both deep basins and transition zones`,
+                    `⏰ Timing: Morning and evening windows, avoid midday heat`,
+                    waterTemp ? `🌡️ Water Temp: ${waterTemp}°F - fish may be scattered` : '🌡️ Check water temperature for thermocline location',
+                    `🎣 Technique: Use lead core or weighted lines for depth control`,
+                    `🐟 Target Species: All salmonids, focus on active fish`
+                ],
+                'Tough': [
+                    `🎯 Target Depth: ${optimalDepth} (deeper due to poor conditions)`,
+                    `⚡ Trolling Speed: ${trollingSpeed} - slow and steady approach`,
+                    `🪱 Lure Selection: Use larger, more visible lures with rattles`,
+                    `📍 Location: Seek protected coves and leeward shores`,
+                    `⏰ Timing: Wait for weather windows, avoid high winds`,
+                    waterTemp ? `🌡️ Water Temp: ${waterTemp}°F - fish may be deeper` : '🌡️ Monitor water temperature changes',
+                    `🎣 Technique: Use heavy tackle and multiple lines`,
+                    `🐟 Target Species: Focus on Lake Trout (more tolerant)`
+                ],
+                'Stay Home': [
+                    `❌ Conditions too poor for safe/effective trolling`,
+                    `🌊 High winds create dangerous boating conditions`,
+                    `🐟 Fish are likely inactive due to weather stress`,
+                    `⏰ Wait for calmer weather windows`,
+                    `📊 Monitor weather forecasts for better conditions`,
+                    `🔧 Use time to prepare equipment and plan routes`,
+                    `📱 Check multiple weather sources for accuracy`,
+                    `🎣 Consider shore fishing if conditions permit`
+                ]
+            };
+            
+            return recommendations[condition] || recommendations['Good'];
+        }
+
+        // Update filters
+        function updateFilters() {
+            const locationFilter = document.getElementById('locationFilter');
+            const conditionFilter = document.getElementById('conditionFilter');
+            
+            // Clear existing options
+            locationFilter.innerHTML = '<option value="">All Locations</option>';
+            
+            // Get unique locations
+            const locations = [...new Set(analysisData.map(item => item.location))];
+            locations.forEach(location => {
+                const option = document.createElement('option');
+                option.value = location;
+                option.textContent = location;
+                locationFilter.appendChild(option);
+            });
+        }
+
+        // Filter analysis data
+        function filterAnalysis() {
+            const locationFilter = document.getElementById('locationFilter').value;
+            const conditionFilter = document.getElementById('conditionFilter').value;
+
+            filteredAnalysis = analysisData.filter(item => {
+                const locationMatch = !locationFilter || item.location === locationFilter;
+                const conditionMatch = !conditionFilter || item.condition_base === conditionFilter;
+                return locationMatch && conditionMatch;
+            });
+
+            renderAnalysisData();
+        }
+
+        // Render analysis data
+        function renderAnalysisData() {
+            const analysisContent = document.getElementById('analysisContent');
+            
+            if (filteredAnalysis.length === 0) {
+                analysisContent.innerHTML = `
+                    <div class="no-data">
+                        <p>No analysis data found for the selected filters.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="analysis-grid">';
+            
+            filteredAnalysis.forEach(item => {
+                html += `
+                    <div class="analysis-card">
+                        <div class="lake-header">
+                            <div class="lake-name">${item.location}</div>
+                            <div class="lake-status ${item.status_class}">${item.condition_base}</div>
+                        </div>
+                        
+                        <div class="analysis-content">
+                            <div class="analysis-summary">
+                                ${item.summary}
+                            </div>
+                            
+                            <div class="conditions-grid">
+                                <div class="condition-item">
+                                    <span class="condition-label">Air Temperature</span>
+                                    <span class="condition-value">${item.temp}°F</span>
+                                </div>
+                                <div class="condition-item">
+                                    <span class="condition-label">Water Temperature</span>
+                                    <span class="condition-value">${item.water_temp ? item.water_temp.toFixed(1) + '°F' : 'N/A'}</span>
+                                </div>
+                                <div class="condition-item">
+                                    <span class="condition-label">Wind Speed</span>
+                                    <span class="condition-value">${item.wind_speed} mph</span>
+                                </div>
+                                <div class="condition-item">
+                                    <span class="condition-label">Wind Gust</span>
+                                    <span class="condition-value">${item.wind_gust} mph</span>
+                                </div>
+                                <div class="condition-item">
+                                    <span class="condition-label">Pressure</span>
+                                    <span class="condition-value">${item.pressure} inHg</span>
+                                </div>
+                                <div class="condition-item">
+                                    <span class="condition-label">Humidity</span>
+                                    <span class="condition-value">${item.humidity}%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="fishing-recommendations">
+                                <div class="recommendations-title">Fishing Recommendations</div>
+                                <ul class="recommendations-list">
+                                    ${item.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            analysisContent.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
