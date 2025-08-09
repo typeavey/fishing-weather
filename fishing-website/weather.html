@@ -694,6 +694,27 @@
             return data;
         }
 
+        // Get fishing rating with color coding
+        function getFishingRating(fishingBase) {
+            if (!fishingBase) return 'Unknown';
+            
+            // Handle numeric ratings (1-10)
+            if (typeof fishingBase === 'number') {
+                return `${fishingBase}/10`;
+            }
+            
+            // Fallback for old text ratings
+            if (fishingBase.includes('Excellent')) return 'Excellent';
+            if (fishingBase.includes('Great')) return 'Great';
+            if (fishingBase.includes('Good')) return 'Good';
+            if (fishingBase.includes('Fair')) return 'Fair';
+            if (fishingBase.includes('Moderate')) return 'Moderate';
+            if (fishingBase.includes('Challenging')) return 'Challenging';
+            if (fishingBase.includes('Poor')) return 'Poor';
+            
+            return 'Fair';
+        }
+
         // Get water temperature for a location
         function getWaterTemperature(location) {
             const waterTemp = waterTempData[location];
@@ -810,7 +831,7 @@
                         <div class="weather-card">
                             <div class="weather-card-header">
                                 <span class="location-name">${item.location}</span>
-                                <span class="fishing-badge ${item.badgeClass}">${item.fishing_base}</span>
+                                <span class="fishing-badge ${item.badgeClass}">${getFishingRating(item.fishing_base)}</span>
                             </div>
                             <div class="weather-details">
                                 <div class="weather-detail">

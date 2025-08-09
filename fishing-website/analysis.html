@@ -270,11 +270,17 @@
         .lake-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
             border-bottom: 2px solid var(--gray-100);
             position: relative;
+        }
+
+        .lake-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
 
         .lake-name {
@@ -285,13 +291,39 @@
             letter-spacing: 0.5px;
         }
 
+        .lake-date {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            font-weight: 500;
+            background: var(--gray-100);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+        }
+
         .lake-status {
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.25rem;
             border-radius: 1rem;
             font-size: 0.875rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            min-width: 80px;
+        }
+
+        .rating-number {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .rating-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
         }
 
         .status-great {
@@ -310,6 +342,21 @@
         }
 
         .status-stay-home {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-fair {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-moderate {
+            background: #fed7aa;
+            color: #c2410c;
+        }
+
+        .status-poor {
             background: #fee2e2;
             color: #991b1b;
         }
@@ -518,10 +565,14 @@
                         <label for="conditionFilter" class="form-label">Condition</label>
                         <select id="conditionFilter" class="form-select">
                             <option value="">All Conditions</option>
-                            <option value="Great">Great Fishing</option>
-                            <option value="Good">Good Fishing</option>
-                            <option value="Tough">Tough Fishing</option>
-                            <option value="Stay Home">Stay Home</option>
+                            <option value="9">Excellent (9-10/10)</option>
+                            <option value="8">Great (8/10)</option>
+                            <option value="7">Good (7/10)</option>
+                            <option value="6">Fair (6/10)</option>
+                            <option value="5">Moderate (5/10)</option>
+                            <option value="4">Poor (4/10)</option>
+                            <option value="3">Difficult (3/10)</option>
+                            <option value="1">Stay Home (1-2/10)</option>
                         </select>
                     </div>
                     <button id="refreshBtn" class="btn btn-primary">
@@ -581,27 +632,24 @@
                     console.warn('Water temperature API not available:', waterTempError);
                 }
 
-                // Try to fetch from API first, fallback to static data
+                // Generate sample data directly (no API dependency)
                 try {
-                    const response = await fetch('/api/weather');
-                    if (response.ok) {
-                        const weatherData = await response.json();
-                        analysisData = generateAnalysisData(weatherData, waterTempData);
-                    } else {
-                        throw new Error('API not available');
-                    }
-                } catch (apiError) {
-                    console.warn('API not available, using sample data:', apiError);
                     analysisData = generateSampleAnalysisData(waterTempData);
+                    console.log('Sample analysis data generated:', analysisData.length, 'items');
+                } catch (sampleError) {
+                    console.error('Error generating sample data:', sampleError);
+                    throw new Error('Failed to generate sample data: ' + sampleError.message);
                 }
 
                 filteredAnalysis = [...analysisData];
+                console.log('Analysis data loaded:', analysisData.length, 'items');
                 updateFilters();
                 renderAnalysisData();
             } catch (error) {
+                console.error('Error in loadAnalysisData:', error);
                 analysisContent.innerHTML = `
                     <div class="error-message">
-                        <p>Error loading analysis data. Please try again.</p>
+                        <p>Error loading analysis data: ${error.message}</p>
                         <button class="btn btn-primary" onclick="loadAnalysisData()">Retry</button>
                     </div>
                 `;
@@ -615,11 +663,16 @@
                 'Mascoma', 'Sunapee', 'First Connecticut'
             ];
             
+            // Updated to use numeric ratings (1-10)
             const conditions = [
-                { label: 'Great Fishing-Lite Wind', class: 'status-great', base: 'Great' },
-                { label: 'Good Fishing-Moderate Wind', class: 'status-good', base: 'Good' },
-                { label: 'Tough Fishing-High Wind', class: 'status-tough', base: 'Tough' },
-                { label: 'Stay Home No Fishing', class: 'status-stay-home', base: 'Stay Home' }
+                { label: 'Excellent Fishing (9-10/10)', class: 'status-great', base: 9, rating: 9 },
+                { label: 'Great Fishing (8/10)', class: 'status-great', base: 8, rating: 8 },
+                { label: 'Good Fishing (7/10)', class: 'status-good', base: 7, rating: 7 },
+                { label: 'Fair Fishing (6/10)', class: 'status-fair', base: 6, rating: 6 },
+                { label: 'Moderate Fishing (5/10)', class: 'status-moderate', base: 5, rating: 5 },
+                { label: 'Poor Fishing (4/10)', class: 'status-poor', base: 4, rating: 4 },
+                { label: 'Difficult Fishing (3/10)', class: 'status-tough', base: 3, rating: 3 },
+                { label: 'Stay Home (1-2/10)', class: 'status-stay-home', base: 1, rating: 1 }
             ];
 
             // Sample water temperatures for August (realistic values)
@@ -641,15 +694,26 @@
                 const windSpeed = Math.floor(Math.random() * 15) + 1;
                 const windGust = windSpeed + Math.floor(Math.random() * 10);
                 const temp = Math.floor(Math.random() * 30) + 45;
-                const pressure = (Math.random() * 2 + 29.5).toFixed(2);
+                const pressure = parseFloat((Math.random() * 2 + 29.5).toFixed(2));
                 const humidity = Math.floor(Math.random() * 30) + 40;
                 const visibility = Math.floor(Math.random() * 5) + 5;
                 const waterTemp = waterTempData[location]?.temperature_fahrenheit || waterTemps[location] || 70;
 
+                // Generate date for today and next few days
+                const date = new Date(today);
+                date.setDate(today.getDate() + Math.floor(Math.random() * 3)); // 0-2 days from today
+                const dateStr = date.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    month: 'long', 
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+
                 data.push({
                     location,
+                    date: dateStr,
                     condition: condition.label,
-                    condition_base: condition.base,
+                    condition_base: condition.rating, // Use numeric rating
                     status_class: condition.class,
                     temp,
                     pressure,
@@ -658,8 +722,8 @@
                     humidity,
                     visibility,
                     water_temp: waterTemp,
-                    summary: generateLakeSummary(location, condition.base, temp, windSpeed, pressure, humidity, waterTemp),
-                    recommendations: generateRecommendations(condition.base, temp, windSpeed, pressure, humidity, waterTemp)
+                    summary: generateLakeSummary(location, condition.rating, temp, windSpeed, pressure, humidity, waterTemp),
+                    recommendations: generateRecommendations(condition.rating, temp, windSpeed, pressure, humidity, waterTemp)
                 });
             });
 
@@ -667,21 +731,27 @@
         }
 
         // Generate lake summary
-        function generateLakeSummary(location, condition, temp, windSpeed, pressure, humidity, waterTemp = null) {
+        function generateLakeSummary(location, rating, temp, windSpeed, pressure, humidity, waterTemp = null) {
             const waterTempInfo = waterTemp ? ` Water temperature is ${waterTemp}°F, with salmonids likely holding in the thermocline zone (${waterTemp >= 70 ? '30-35 feet' : waterTemp >= 65 ? '25-30 feet' : '20-25 feet'}).` : '';
             
             const summaries = {
-                'Great': `Excellent fishing conditions at ${location}! The combination of moderate temperatures (${temp}°F), light winds (${windSpeed} mph), and stable atmospheric pressure (${pressure} inHg) creates ideal conditions for salmonid trolling.${waterTempInfo} The water clarity is excellent with ${humidity}% humidity, making it perfect for trolling. Expect active Rainbow Trout, Salmon, and Lake Trout throughout the day.`,
-                'Good': `Good fishing conditions at ${location}. With temperatures at ${temp}°F and winds at ${windSpeed} mph, conditions are favorable for salmonid trolling.${waterTempInfo} The pressure reading of ${pressure} inHg indicates stable weather, though you may need to adjust your trolling depth and speed slightly. Fish should be moderately active.`,
-                'Tough': `Challenging fishing conditions at ${location}. High winds (${windSpeed} mph) and ${temp}°F temperatures make trolling difficult.${waterTempInfo} The pressure of ${pressure} inHg suggests changing conditions. Consider fishing in protected areas or waiting for calmer weather. Focus on Lake Trout which are more tolerant of poor conditions.`,
-                'Stay Home': `Poor fishing conditions at ${location}. With ${temp}°F temperatures, high winds (${windSpeed} mph), and pressure at ${pressure} inHg, conditions are not suitable for safe trolling.${waterTempInfo} Consider rescheduling your trip for better weather or focus on shore fishing if conditions permit.`
+                10: `Perfect fishing conditions at ${location}! The combination of moderate temperatures (${temp}°F), light winds (${windSpeed} mph), and stable atmospheric pressure (${pressure} inHg) creates ideal conditions for salmonid trolling.${waterTempInfo} The water clarity is excellent with ${humidity}% humidity, making it perfect for trolling. Expect active Rainbow Trout, Salmon, and Lake Trout throughout the day.`,
+                9: `Excellent fishing conditions at ${location}! The combination of moderate temperatures (${temp}°F), light winds (${windSpeed} mph), and stable atmospheric pressure (${pressure} inHg) creates ideal conditions for salmonid trolling.${waterTempInfo} The water clarity is excellent with ${humidity}% humidity, making it perfect for trolling. Expect active Rainbow Trout, Salmon, and Lake Trout throughout the day.`,
+                8: `Great fishing conditions at ${location}. With temperatures at ${temp}°F and winds at ${windSpeed} mph, conditions are very favorable for salmonid trolling.${waterTempInfo} The pressure reading of ${pressure} inHg indicates stable weather. Fish should be very active.`,
+                7: `Good fishing conditions at ${location}. With temperatures at ${temp}°F and winds at ${windSpeed} mph, conditions are favorable for salmonid trolling.${waterTempInfo} The pressure reading of ${pressure} inHg indicates stable weather, though you may need to adjust your trolling depth and speed slightly. Fish should be moderately active.`,
+                6: `Fair fishing conditions at ${location}. With temperatures at ${temp}°F and winds at ${windSpeed} mph, conditions are manageable for salmonid trolling.${waterTempInfo} The pressure of ${pressure} inHg suggests some weather changes. Fish may be less active.`,
+                5: `Moderate fishing conditions at ${location}. With temperatures at ${temp}°F and winds at ${windSpeed} mph, conditions are challenging for salmonid trolling.${waterTempInfo} The pressure of ${pressure} inHg suggests changing conditions. Consider fishing in protected areas.`,
+                4: `Poor fishing conditions at ${location}. High winds (${windSpeed} mph) and ${temp}°F temperatures make trolling difficult.${waterTempInfo} The pressure of ${pressure} inHg suggests poor conditions. Focus on Lake Trout which are more tolerant.`,
+                3: `Difficult fishing conditions at ${location}. High winds (${windSpeed} mph) and ${temp}°F temperatures make trolling very difficult.${waterTempInfo} The pressure of ${pressure} inHg suggests changing conditions. Consider waiting for better weather.`,
+                2: `Very difficult fishing conditions at ${location}. With ${temp}°F temperatures, high winds (${windSpeed} mph), and pressure at ${pressure} inHg, conditions are not suitable for safe trolling.${waterTempInfo} Consider rescheduling your trip.`,
+                1: `Dangerous fishing conditions at ${location}. With ${temp}°F temperatures, high winds (${windSpeed} mph), and pressure at ${pressure} inHg, conditions are not suitable for safe trolling.${waterTempInfo} Stay home and wait for better weather.`
             };
             
-            return summaries[condition] || summaries['Good'];
+            return summaries[rating] || summaries[6];
         }
 
         // Generate recommendations for salmonid trolling in large lakes
-        function generateRecommendations(condition, temp, windSpeed, pressure, humidity, waterTemp = null) {
+        function generateRecommendations(rating, temp, windSpeed, pressure, humidity, waterTemp = null) {
             // Determine thermocline depth based on water temperature
             function getThermoclineDepth(waterTemp) {
                 if (!waterTemp) return 30; // Default if no water temp data
@@ -693,12 +763,12 @@
             }
             
             // Determine optimal trolling depth based on conditions
-            function getOptimalDepth(waterTemp, condition) {
+            function getOptimalDepth(waterTemp, rating) {
                 const thermoclineDepth = getThermoclineDepth(waterTemp);
                 
-                if (condition === 'Great') {
+                if (rating >= 8) {
                     return `${thermoclineDepth - 5}-${thermoclineDepth + 5} feet`;
-                } else if (condition === 'Good') {
+                } else if (rating >= 6) {
                     return `${thermoclineDepth - 10}-${thermoclineDepth + 10} feet`;
                 } else {
                     return `${thermoclineDepth - 15}-${thermoclineDepth + 15} feet`;
@@ -706,23 +776,23 @@
             }
             
             // Determine trolling speed based on conditions
-            function getTrollingSpeed(condition, waterTemp) {
+            function getTrollingSpeed(rating, waterTemp) {
                 if (waterTemp && waterTemp >= 75) {
                     // Warm water - fish are less active
-                    return condition === 'Great' ? '1.5-2.0 mph' : '1.0-1.5 mph';
+                    return rating >= 8 ? '1.5-2.0 mph' : '1.0-1.5 mph';
                 } else if (waterTemp && waterTemp >= 70) {
-                    return condition === 'Great' ? '2.0-2.5 mph' : '1.5-2.0 mph';
+                    return rating >= 8 ? '2.0-2.5 mph' : '1.5-2.0 mph';
                 } else {
-                    return condition === 'Great' ? '2.5-3.0 mph' : '2.0-2.5 mph';
+                    return rating >= 8 ? '2.5-3.0 mph' : '2.0-2.5 mph';
                 }
             }
             
             const thermoclineDepth = getThermoclineDepth(waterTemp);
-            const optimalDepth = getOptimalDepth(waterTemp, condition);
-            const trollingSpeed = getTrollingSpeed(condition, waterTemp);
+            const optimalDepth = getOptimalDepth(waterTemp, rating);
+            const trollingSpeed = getTrollingSpeed(rating, waterTemp);
             
             const recommendations = {
-                'Great': [
+                10: [
                     `🎯 Target Depth: ${optimalDepth} (near thermocline at ${thermoclineDepth} feet)`,
                     `⚡ Trolling Speed: ${trollingSpeed} for optimal salmonid response`,
                     `🪱 Lure Selection: Use spoons and plugs in silver/blue patterns`,
@@ -732,7 +802,17 @@
                     `🎣 Technique: Use downriggers to maintain precise depth control`,
                     `🐟 Target Species: Rainbow Trout, Salmon, Lake Trout`
                 ],
-                'Good': [
+                9: [
+                    `🎯 Target Depth: ${optimalDepth} (near thermocline at ${thermoclineDepth} feet)`,
+                    `⚡ Trolling Speed: ${trollingSpeed} for optimal salmonid response`,
+                    `🪱 Lure Selection: Use spoons and plugs in silver/blue patterns`,
+                    `📍 Location: Focus on drop-offs and underwater points`,
+                    `⏰ Timing: Early morning (5-8 AM) and evening (6-9 PM)`,
+                    waterTemp ? `🌡️ Water Temp: ${waterTemp}°F - fish are in thermocline zone` : '🌡️ Monitor water temperature for thermocline depth',
+                    `🎣 Technique: Use downriggers to maintain precise depth control`,
+                    `🐟 Target Species: Rainbow Trout, Salmon, Lake Trout`
+                ],
+                8: [
                     `🎯 Target Depth: ${optimalDepth} (thermocline at ${thermoclineDepth} feet)`,
                     `⚡ Trolling Speed: ${trollingSpeed} - adjust based on fish response`,
                     `🪱 Lure Selection: Mix of spoons, plugs, and flasher/fly combinations`,
@@ -742,7 +822,27 @@
                     `🎣 Technique: Use lead core or weighted lines for depth control`,
                     `🐟 Target Species: All salmonids, focus on active fish`
                 ],
-                'Tough': [
+                7: [
+                    `🎯 Target Depth: ${optimalDepth} (thermocline at ${thermoclineDepth} feet)`,
+                    `⚡ Trolling Speed: ${trollingSpeed} - adjust based on fish response`,
+                    `🪱 Lure Selection: Mix of spoons, plugs, and flasher/fly combinations`,
+                    `📍 Location: Try both deep basins and transition zones`,
+                    `⏰ Timing: Morning and evening windows, avoid midday heat`,
+                    waterTemp ? `🌡️ Water Temp: ${waterTemp}°F - fish may be scattered` : '🌡️ Check water temperature for thermocline location',
+                    `🎣 Technique: Use lead core or weighted lines for depth control`,
+                    `🐟 Target Species: All salmonids, focus on active fish`
+                ],
+                6: [
+                    `🎯 Target Depth: ${optimalDepth} (thermocline at ${thermoclineDepth} feet)`,
+                    `⚡ Trolling Speed: ${trollingSpeed} - slow and steady approach`,
+                    `🪱 Lure Selection: Use larger, more visible lures with rattles`,
+                    `📍 Location: Seek protected coves and leeward shores`,
+                    `⏰ Timing: Wait for weather windows, avoid high winds`,
+                    waterTemp ? `🌡️ Water Temp: ${waterTemp}°F - fish may be deeper` : '🌡️ Monitor water temperature changes',
+                    `🎣 Technique: Use heavy tackle and multiple lines`,
+                    `🐟 Target Species: Focus on Lake Trout (more tolerant)`
+                ],
+                5: [
                     `🎯 Target Depth: ${optimalDepth} (deeper due to poor conditions)`,
                     `⚡ Trolling Speed: ${trollingSpeed} - slow and steady approach`,
                     `🪱 Lure Selection: Use larger, more visible lures with rattles`,
@@ -752,7 +852,37 @@
                     `🎣 Technique: Use heavy tackle and multiple lines`,
                     `🐟 Target Species: Focus on Lake Trout (more tolerant)`
                 ],
-                'Stay Home': [
+                4: [
+                    `🎯 Target Depth: ${optimalDepth} (deeper due to poor conditions)`,
+                    `⚡ Trolling Speed: ${trollingSpeed} - slow and steady approach`,
+                    `🪱 Lure Selection: Use larger, more visible lures with rattles`,
+                    `📍 Location: Seek protected coves and leeward shores`,
+                    `⏰ Timing: Wait for weather windows, avoid high winds`,
+                    waterTemp ? `🌡️ Water Temp: ${waterTemp}°F - fish may be deeper` : '🌡️ Monitor water temperature changes',
+                    `🎣 Technique: Use heavy tackle and multiple lines`,
+                    `🐟 Target Species: Focus on Lake Trout (more tolerant)`
+                ],
+                3: [
+                    `🎯 Target Depth: ${optimalDepth} (deeper due to poor conditions)`,
+                    `⚡ Trolling Speed: ${trollingSpeed} - slow and steady approach`,
+                    `🪱 Lure Selection: Use larger, more visible lures with rattles`,
+                    `📍 Location: Seek protected coves and leeward shores`,
+                    `⏰ Timing: Wait for weather windows, avoid high winds`,
+                    waterTemp ? `🌡️ Water Temp: ${waterTemp}°F - fish may be deeper` : '🌡️ Monitor water temperature changes',
+                    `🎣 Technique: Use heavy tackle and multiple lines`,
+                    `🐟 Target Species: Focus on Lake Trout (more tolerant)`
+                ],
+                2: [
+                    `❌ Conditions too poor for safe/effective trolling`,
+                    `🌊 High winds create dangerous boating conditions`,
+                    `🐟 Fish are likely inactive due to weather stress`,
+                    `⏰ Wait for calmer weather windows`,
+                    `📊 Monitor weather forecasts for better conditions`,
+                    `🔧 Use time to prepare equipment and plan routes`,
+                    `📱 Check multiple weather sources for accuracy`,
+                    `🎣 Consider shore fishing if conditions permit`
+                ],
+                1: [
                     `❌ Conditions too poor for safe/effective trolling`,
                     `🌊 High winds create dangerous boating conditions`,
                     `🐟 Fish are likely inactive due to weather stress`,
@@ -764,7 +894,7 @@
                 ]
             };
             
-            return recommendations[condition] || recommendations['Good'];
+            return recommendations[rating] || recommendations[6];
         }
 
         // Update filters
@@ -792,11 +922,38 @@
 
             filteredAnalysis = analysisData.filter(item => {
                 const locationMatch = !locationFilter || item.location === locationFilter;
-                const conditionMatch = !conditionFilter || item.condition_base === conditionFilter;
+                const conditionMatch = !conditionFilter || item.condition_base == conditionFilter; // Use == for type coercion
                 return locationMatch && conditionMatch;
             });
 
             renderAnalysisData();
+        }
+
+        // Get status class based on numeric rating
+        function getStatusClass(rating) {
+            if (typeof rating === 'number') {
+                if (rating >= 8) return 'status-great';
+                if (rating >= 6) return 'status-good';
+                if (rating >= 4) return 'status-fair';
+                return 'status-poor';
+            }
+            return 'status-good';
+        }
+
+        // Get rating label based on numeric rating
+        function getRatingLabel(rating) {
+            if (typeof rating === 'number') {
+                if (rating >= 9) return 'Excellent';
+                if (rating >= 8) return 'Great';
+                if (rating >= 7) return 'Good';
+                if (rating >= 6) return 'Fair';
+                if (rating >= 5) return 'Moderate';
+                if (rating >= 4) return 'Poor';
+                if (rating >= 3) return 'Difficult';
+                if (rating >= 2) return 'Very Difficult';
+                return 'Stay Home';
+            }
+            return 'Good';
         }
 
         // Render analysis data
@@ -818,8 +975,14 @@
                 html += `
                     <div class="analysis-card">
                         <div class="lake-header">
-                            <div class="lake-name">${item.location}</div>
-                            <div class="lake-status ${item.status_class}">${item.condition_base}</div>
+                            <div class="lake-info">
+                                <div class="lake-name">${item.location}</div>
+                                <div class="lake-date">${item.date || 'Today'}</div>
+                            </div>
+                            <div class="lake-status ${getStatusClass(item.condition_base)}">
+                                <span class="rating-number">${item.condition_base}/10</span>
+                                <span class="rating-label">${getRatingLabel(item.condition_base)}</span>
+                            </div>
                         </div>
                         
                         <div class="analysis-content">

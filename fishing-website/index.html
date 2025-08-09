@@ -215,8 +215,12 @@
         }
 
         .card-icon.stocking {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.card-icon.guide {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
 
         .card-title {
             font-size: 1.25rem;
@@ -836,6 +840,27 @@
 
                 <div class="dashboard-card">
                     <div class="card-header">
+                        <div class="card-icon guide">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div>
+                            <h3 class="card-title">Analysis Guide</h3>
+                        </div>
+                    </div>
+                    <p class="card-description">
+                        Comprehensive guide explaining how weather variables impact fishing ratings. 
+                        Learn about wind speed thresholds, temperature effects, and trolling tips.
+                    </p>
+                    <div class="card-actions">
+                        <a href="/guide.html" class="btn btn-primary">
+                            <i class="fas fa-arrow-right"></i>
+                            View Guide
+                        </a>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
                         <div class="card-icon stocking">
                             <i class="fas fa-fish"></i>
                         </div>
@@ -931,6 +956,8 @@
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing application...');
+            document.title = 'NH-VT Trolling Conditions';
             loadWeatherData();
             loadWaterTemperatureData();
             setupEventListeners();
@@ -938,20 +965,31 @@
 
         // Setup event listeners
         function setupEventListeners() {
-            document.getElementById('refreshBtn').addEventListener('click', loadWeatherData);
-            document.getElementById('refreshWaterTempBtn').addEventListener('click', loadWaterTemperatureData);
-            document.getElementById('dayFilter').addEventListener('change', filterData);
-            document.getElementById('locationFilter').addEventListener('change', filterData);
-            document.getElementById('conditionFilter').addEventListener('change', filterData);
+            const refreshBtn = document.getElementById('refreshBtn');
+            const refreshWaterTempBtn = document.getElementById('refreshWaterTempBtn');
+            const dayFilter = document.getElementById('dayFilter');
+            const locationFilter = document.getElementById('locationFilter');
+            const conditionFilter = document.getElementById('conditionFilter');
+            
+            if (refreshBtn) refreshBtn.addEventListener('click', loadWeatherData);
+            if (refreshWaterTempBtn) refreshWaterTempBtn.addEventListener('click', loadWaterTemperatureData);
+            if (dayFilter) dayFilter.addEventListener('change', filterData);
+            if (locationFilter) locationFilter.addEventListener('change', filterData);
+            if (conditionFilter) conditionFilter.addEventListener('change', filterData);
         }
         
         // Load water temperature data
         async function loadWaterTemperatureData() {
+            console.log('Loading water temperature data...');
             try {
                 const response = await fetch('/api/water-temperature/latest');
+                console.log('Water temp response status:', response.status);
                 if (response.ok) {
                     waterTempData = await response.json();
+                    console.log('Water temp data received:', Object.keys(waterTempData).length, 'lakes');
                     updateWaterTemperatureDisplay();
+                } else {
+                    console.error('Water temp response not ok:', response.status);
                 }
             } catch (error) {
                 console.error('Error loading water temperature data:', error);
@@ -960,8 +998,14 @@
         
         // Update water temperature display
         function updateWaterTemperatureDisplay() {
+            console.log('Updating water temperature display...');
             const waterTempSection = document.getElementById('waterTemperatureSection');
-            if (!waterTempSection) return;
+            if (!waterTempSection) {
+                console.error('Water temperature section not found!');
+                return;
+            }
+            
+            console.log('Water temp data to display:', waterTempData);
             
             let html = '<div class="water-temp-grid">';
             
@@ -1187,6 +1231,15 @@
         function getBadgeClass(fishingBase) {
             if (!fishingBase) return 'badge-fair';
             
+            // Handle numeric ratings (1-10)
+            if (typeof fishingBase === 'number') {
+                if (fishingBase >= 8) return 'badge-great';
+                if (fishingBase >= 6) return 'badge-good';
+                if (fishingBase >= 4) return 'badge-fair';
+                return 'badge-poor';
+            }
+            
+            // Fallback for old text ratings
             if (fishingBase.includes('Excellent')) return 'badge-great';
             if (fishingBase.includes('Great')) return 'badge-great';
             if (fishingBase.includes('Good')) return 'badge-good';
@@ -1202,6 +1255,12 @@
         function getFishingRating(fishingBase) {
             if (!fishingBase) return 'Fair';
             
+            // Handle numeric ratings (1-10)
+            if (typeof fishingBase === 'number') {
+                return `${fishingBase}/10`;
+            }
+            
+            // Fallback for old text ratings
             if (fishingBase.includes('Excellent')) return 'Excellent';
             if (fishingBase.includes('Great')) return 'Great';
             if (fishingBase.includes('Good')) return 'Good';
@@ -1210,6 +1269,17 @@
             if (fishingBase.includes('Poor')) return 'Poor';
             
             return 'Fair';
+        }
+
+        // Get rating color based on numeric rating
+        function getRatingColor(rating) {
+            if (typeof rating === 'number') {
+                if (rating >= 8) return 'excellent';
+                if (rating >= 6) return 'good';
+                if (rating >= 4) return 'fair';
+                return 'poor';
+            }
+            return 'fair';
         }
 
         // Get rating explanation based on weather conditions
@@ -1223,7 +1293,22 @@
             
             let explanations = [];
             
-            // Temperature analysis
+            // WIND SPEED - PRIMARY FACTOR (heavily weighted)
+            if (windSpeed) {
+                if (windSpeed <= 4) {
+                    explanations.push('EXCELLENT wind conditions (0-4 mph) - Perfect for trolling');
+                } else if (windSpeed <= 6) {
+                    explanations.push('GOOD wind conditions (4.1-6 mph) - Very fishable');
+                } else if (windSpeed <= 8) {
+                    explanations.push('FAIR wind conditions (6.1-8 mph) - Manageable but challenging');
+                } else if (windSpeed <= 10) {
+                    explanations.push('TOUGH wind conditions (8.1-10 mph) - Difficult for trolling');
+                } else {
+                    explanations.push('HARD NO - Wind too strong (10.1+ mph) - Not recommended');
+                }
+            }
+            
+            // Temperature analysis (secondary factor)
             if (temp) {
                 if (temp >= 75) {
                     explanations.push('High temperature may reduce fish activity');
@@ -1236,20 +1321,7 @@
                 }
             }
             
-            // Wind analysis
-            if (windSpeed) {
-                if (windSpeed <= 5) {
-                    explanations.push('Light winds - excellent for fishing');
-                } else if (windSpeed <= 10) {
-                    explanations.push('Moderate winds - good conditions');
-                } else if (windSpeed <= 15) {
-                    explanations.push('Strong winds - challenging conditions');
-                } else {
-                    explanations.push('High winds - difficult fishing');
-                }
-            }
-            
-            // Pressure analysis
+            // Pressure analysis (tertiary factor)
             if (pressure) {
                 if (pressure >= 30.0) {
                     explanations.push('High pressure - stable conditions');
@@ -1260,7 +1332,7 @@
                 }
             }
             
-            // Weather conditions analysis
+            // Weather conditions analysis (minimal impact)
             if (summary) {
                 if (summary.toLowerCase().includes('clear') || summary.toLowerCase().includes('sunny')) {
                     explanations.push('Clear skies - good visibility');
@@ -1284,11 +1356,6 @@
             }
             
             return explanations.join('; ');
-        }
-            if (fishingBase.includes('Challenging')) return 'Challenging';
-            if (fishingBase.includes('Poor')) return 'Poor';
-            
-            return 'Fair';
         }
     </script>
 </body>

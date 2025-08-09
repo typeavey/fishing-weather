@@ -693,6 +693,27 @@
             return data;
         }
 
+        // Get fishing rating with color coding
+        function getFishingRating(fishingBase) {
+            if (!fishingBase) return 'Unknown';
+            
+            // Handle numeric ratings (1-10)
+            if (typeof fishingBase === 'number') {
+                return `${fishingBase}/10`;
+            }
+            
+            // Fallback for old text ratings
+            if (fishingBase.includes('Excellent')) return 'Excellent';
+            if (fishingBase.includes('Great')) return 'Great';
+            if (fishingBase.includes('Good')) return 'Good';
+            if (fishingBase.includes('Fair')) return 'Fair';
+            if (fishingBase.includes('Moderate')) return 'Moderate';
+            if (fishingBase.includes('Challenging')) return 'Challenging';
+            if (fishingBase.includes('Poor')) return 'Poor';
+            
+            return 'Fair';
+        }
+
         // Get random weather summary
         function getRandomSummary() {
             const summaries = [
@@ -766,7 +787,7 @@
                                     <div class="forecast-location">${item.location || 'Unknown Location'}</div>
                                     <div class="forecast-date">${item.date || 'Unknown Date'}</div>
                                 </div>
-                                <span class="fishing-badge ${item.badgeClass || 'badge-good'}">${item.fishing_base || 'Good'}</span>
+                                <span class="fishing-badge ${item.badgeClass || 'badge-good'}">${getFishingRating(item.fishing_base) || 'Good'}</span>
                             </div>
                             <div class="forecast-conditions">
                                 <div class="condition-item">

@@ -53,6 +53,24 @@ except ImportError:
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
     from working_database import WorkingWeatherDatabase
 
+# Import stocking data
+try:
+    from stocking_data import NHStockingData
+except ImportError:
+    # If running from a different directory, add the current directory to path
+    import sys
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from stocking_data import NHStockingData
+
+# Import water temperature data
+try:
+    from water_temperature import WaterTemperatureData
+except ImportError:
+    # If running from a different directory, add the current directory to path
+    import sys
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from water_temperature import WaterTemperatureData
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
@@ -67,6 +85,12 @@ CACHE_DURATION = 300  # 5 minutes
 
 # Initialize database
 db = WorkingWeatherDatabase()
+
+# Initialize stocking data
+stocking_data = NHStockingData()
+
+# Initialize water temperature data
+water_temp_data = WaterTemperatureData()
 
 def get_cached_weather_data():
     """Get weather data from cache or database or generate new data"""
@@ -264,6 +288,78 @@ def fishing_conditions():
         logger.error(f"Error in /api/fishing/conditions: {e}")
         return jsonify({"error": "Failed to fetch fishing conditions"}), 500
 
+@app.route('/api/stocking')
+def api_stocking():
+    """Get stocking data for all lakes"""
+    try:
+        lake_name = request.args.get('lake')
+        days_back = int(request.args.get('days', 30))
+        
+        data = stocking_data.get_stocking_data(lake_name, days_back)
+        return jsonify(data)
+        
+    except Exception as e:
+        logger.error(f"Error in stocking API: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/stocking/update')
+def api_stocking_update():
+    """Update stocking data from NH Fish & Game"""
+    try:
+        result = stocking_data.update_stocking_data()
+        return jsonify(result)
+        
+    except Exception as e:
+        logger.error(f"Error in stocking update: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/stocking/status')
+def api_stocking_status():
+    """Get stocking data update status"""
+    try:
+        status = stocking_data.get_update_status()
+        return jsonify(status)
+        
+    except Exception as e:
+        logger.error(f"Error in stocking status: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/water-temperature')
+def api_water_temperature():
+    """Get water temperature data for all lakes"""
+    try:
+        lake_name = request.args.get('lake')
+        days_back = int(request.args.get('days', 7))
+        
+        data = water_temp_data.get_water_temperatures(lake_name, days_back)
+        return jsonify(data)
+        
+    except Exception as e:
+        logger.error(f"Error in water temperature API: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/water-temperature/latest')
+def api_water_temperature_latest():
+    """Get latest water temperature for each lake"""
+    try:
+        data = water_temp_data.get_latest_temperatures()
+        return jsonify(data)
+        
+    except Exception as e:
+        logger.error(f"Error in latest water temperature API: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/water-temperature/update')
+def api_water_temperature_update():
+    """Update water temperature data from USGS and NOAA"""
+    try:
+        result = water_temp_data.update_water_temperatures()
+        return jsonify(result)
+        
+    except Exception as e:
+        logger.error(f"Error in water temperature update: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/weather-data.json')
 def weather_data_json():
     """Serve weather data as JSON file (for static fallback)"""
@@ -299,6 +395,21 @@ def locations_page():
 def forecast_page():
     """Serve the forecast page"""
     return send_from_directory('fishing-website', 'forecast.html')
+
+@app.route('/analysis.html')
+def analysis_page():
+    """Serve the analysis page"""
+    return send_from_directory('fishing-website', 'analysis.html')
+
+@app.route('/guide.html')
+def guide():
+    """Serve the fishing analysis guide page"""
+    return send_from_directory('fishing-website', 'guide.html')
+
+@app.route('/stocking.html')
+def stocking_page():
+    """Serve the stocking page"""
+    return send_from_directory('fishing-website', 'stocking.html')
 
 @app.route('/demo.html')
 def demo_page():

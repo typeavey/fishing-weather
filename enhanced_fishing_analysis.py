@@ -24,15 +24,15 @@ class EnhancedFishingAnalysis:
         Initialize with custom thresholds or use defaults
         """
         self.thresholds = thresholds or {
-            # Wind speed thresholds (mph)
+            # Wind speed thresholds (mph) - Based on trolling requirements
             "wind_speed": {
-                "excellent": 3,      # 0-3 mph: Excellent fishing
-                "great": 5,          # 3-5 mph: Great fishing
-                "good": 8,           # 5-8 mph: Good fishing
-                "moderate": 12,      # 8-12 mph: Moderate fishing
-                "challenging": 15,   # 12-15 mph: Challenging
-                "difficult": 20,     # 15-20 mph: Difficult
-                "dangerous": 25      # 20+ mph: Dangerous/Stay home
+                "excellent": 4,      # 0-4 mph: Excellent fishing (Perfect for trolling)
+                "great": 6,          # 4.1-6 mph: Great fishing (Very fishable)
+                "good": 8,           # 6.1-8 mph: Good fishing (Manageable but challenging)
+                "moderate": 10,      # 8.1-10 mph: Moderate fishing (Difficult for trolling)
+                "challenging": 10.1, # 10.1+ mph: Challenging (Hard no - not recommended)
+                "difficult": 15,     # 15+ mph: Difficult
+                "dangerous": 20      # 20+ mph: Dangerous/Stay home
             },
             # Wind gust thresholds (mph)
             "wind_gust": {
@@ -105,13 +105,14 @@ class EnhancedFishingAnalysis:
         )
         
         # Determine fishing rating
-        fishing_rating = self._determine_fishing_rating(overall_score)
+        numeric_rating, rating_description = self._determine_fishing_rating(overall_score)
         
         # Generate detailed analysis
         analysis = {
             'overall_score': overall_score,
-            'fishing_rating': fishing_rating,
-            'fishing_base': fishing_rating,
+            'fishing_rating': numeric_rating,
+            'fishing_base': numeric_rating,
+            'rating_description': rating_description,
             'wind_analysis': wind_analysis,
             'temperature_analysis': temp_analysis,
             'weather_analysis': weather_analysis,
@@ -134,35 +135,35 @@ class EnhancedFishingAnalysis:
         wind_scores = self.thresholds['wind_speed']
         gust_scores = self.thresholds['wind_gust']
         
-        # Wind speed analysis
+        # Wind speed analysis - Based on trolling requirements
         if wind_speed <= wind_scores['excellent']:
             wind_rating = "Excellent"
             wind_score = 100
-            wind_description = f"Light winds ({wind_speed:.1f} mph) - Perfect for fishing"
+            wind_description = f"EXCELLENT wind conditions ({wind_speed:.1f} mph) - Perfect for trolling"
         elif wind_speed <= wind_scores['great']:
             wind_rating = "Great"
-            wind_score = 90
-            wind_description = f"Great wind conditions ({wind_speed:.1f} mph)"
+            wind_score = 85
+            wind_description = f"GOOD wind conditions ({wind_speed:.1f} mph) - Very fishable"
         elif wind_speed <= wind_scores['good']:
             wind_rating = "Good"
-            wind_score = 75
-            wind_description = f"Good wind conditions ({wind_speed:.1f} mph)"
+            wind_score = 65
+            wind_description = f"FAIR wind conditions ({wind_speed:.1f} mph) - Manageable but challenging"
         elif wind_speed <= wind_scores['moderate']:
             wind_rating = "Moderate"
-            wind_score = 60
-            wind_description = f"Moderate winds ({wind_speed:.1f} mph) - Still fishable"
+            wind_score = 35
+            wind_description = f"TOUGH wind conditions ({wind_speed:.1f} mph) - Difficult for trolling"
         elif wind_speed <= wind_scores['challenging']:
             wind_rating = "Challenging"
-            wind_score = 40
-            wind_description = f"Challenging winds ({wind_speed:.1f} mph) - Difficult fishing"
+            wind_score = 10
+            wind_description = f"HARD NO - Wind too strong ({wind_speed:.1f} mph) - Not recommended"
         elif wind_speed <= wind_scores['difficult']:
             wind_rating = "Difficult"
-            wind_score = 20
-            wind_description = f"Difficult winds ({wind_speed:.1f} mph) - Very challenging"
+            wind_score = 5
+            wind_description = f"VERY DIFFICULT winds ({wind_speed:.1f} mph) - Stay home"
         else:
             wind_rating = "Dangerous"
             wind_score = 0
-            wind_description = f"Dangerous winds ({wind_speed:.1f} mph) - Stay home"
+            wind_description = f"DANGEROUS winds ({wind_speed:.1f} mph) - Stay home"
         
         # Wind gust analysis
         if wind_gust <= gust_scores['light']:
@@ -342,13 +343,13 @@ class EnhancedFishingAnalysis:
                                 weather_analysis: Dict, pressure_analysis: Dict, 
                                 moon_analysis: Dict) -> float:
         """Calculate overall fishing score (0-100)"""
-        # Weight factors by importance
+        # Weight factors by importance - Wind speed heavily weighted for trolling
         weights = {
-            'wind': 0.35,      # Most important (35%)
-            'temperature': 0.20,  # Second most important (20%)
-            'weather': 0.20,   # Weather conditions (20%)
-            'pressure': 0.15,  # Pressure (15%)
-            'moon': 0.10      # Moon phase (10%)
+            'wind': 0.60,      # Wind speed is CRITICAL for trolling (60%)
+            'temperature': 0.15,  # Secondary factor (15%)
+            'weather': 0.10,   # Weather conditions (10%)
+            'pressure': 0.10,  # Pressure (10%)
+            'moon': 0.05      # Moon phase (5%)
         }
         
         overall_score = (
@@ -361,24 +362,28 @@ class EnhancedFishingAnalysis:
         
         return round(overall_score, 1)
     
-    def _determine_fishing_rating(self, overall_score: float) -> str:
-        """Determine fishing rating based on overall score"""
+    def _determine_fishing_rating(self, overall_score: float) -> Tuple[int, str]:
+        """Determine fishing rating based on overall score - returns (numeric_rating, description)"""
         if overall_score >= 90:
-            return "Excellent Fishing"
+            return (10, "Perfect conditions for trolling")
         elif overall_score >= 80:
-            return "Great Fishing"
+            return (9, "Excellent conditions for fishing")
         elif overall_score >= 70:
-            return "Good Fishing"
+            return (8, "Great conditions for fishing")
         elif overall_score >= 60:
-            return "Fair Fishing"
+            return (7, "Good conditions for fishing")
         elif overall_score >= 50:
-            return "Moderate Fishing"
+            return (6, "Fair conditions for fishing")
         elif overall_score >= 40:
-            return "Challenging Fishing"
+            return (5, "Moderate conditions - some challenges")
         elif overall_score >= 30:
-            return "Difficult Fishing"
+            return (4, "Poor conditions - significant challenges")
+        elif overall_score >= 20:
+            return (3, "Difficult conditions - high winds/weather")
+        elif overall_score >= 10:
+            return (2, "Very difficult conditions - extreme weather")
         else:
-            return "Poor Fishing - Consider Staying Home"
+            return (1, "Stay home - dangerous conditions")
     
     def _generate_recommendations(self, wind_analysis: Dict, temp_analysis: Dict,
                                  weather_analysis: Dict, pressure_analysis: Dict,
