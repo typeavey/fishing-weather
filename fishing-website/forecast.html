@@ -519,6 +519,20 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Specific Day</label>
+                        <select class="form-select" id="daySelect">
+                            <option value="">All Days</option>
+                            <option value="Today">Today</option>
+                            <option value="Tomorrow">Tomorrow</option>
+                            <option value="Day 3">Day 3</option>
+                            <option value="Day 4">Day 4</option>
+                            <option value="Day 5">Day 5</option>
+                            <option value="Day 6">Day 6</option>
+                            <option value="Day 7">Day 7</option>
+                            <option value="Day 8">Day 8</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Condition Filter</label>
                         <select class="form-select" id="conditionSelect">
                             <option value="">All Conditions</option>
@@ -599,6 +613,7 @@
             document.getElementById('updateForecastBtn').addEventListener('click', loadForecastData);
             document.getElementById('locationSelect').addEventListener('change', filterData);
             document.getElementById('conditionSelect').addEventListener('change', filterData);
+            document.getElementById('daySelect').addEventListener('change', filterData);
         }
 
         // Load forecast data
@@ -711,11 +726,25 @@
         function filterData() {
             const locationFilter = document.getElementById('locationSelect').value;
             const conditionFilter = document.getElementById('conditionSelect').value;
+            const dayFilter = document.getElementById('daySelect').value;
 
             filteredData = forecastData.filter(item => {
                 const locationMatch = !locationFilter || item.location === locationFilter;
                 const conditionMatch = !conditionFilter || item.fishing_base === conditionFilter;
-                return locationMatch && conditionMatch;
+                
+                // Day filter logic
+                let dayMatch = true;
+                if (dayFilter) {
+                    const today = new Date();
+                    const itemDate = new Date(item.date);
+                    const dayDiff = Math.floor((itemDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    if (dayFilter === 'Today' && dayDiff !== 0) dayMatch = false;
+                    else if (dayFilter === 'Tomorrow' && dayDiff !== 1) dayMatch = false;
+                    else if (dayFilter.startsWith('Day ') && dayDiff !== parseInt(dayFilter.split(' ')[1]) - 1) dayMatch = false;
+                }
+                
+                return locationMatch && conditionMatch && dayMatch;
             });
 
             renderForecastData();
@@ -751,10 +780,10 @@
                         <div class="forecast-card">
                             <div class="forecast-header">
                                 <div>
-                                    <div class="forecast-location">${item.location}</div>
-                                    <div class="forecast-date">${item.date}</div>
+                                    <div class="forecast-location">${item.location || 'Unknown Location'}</div>
+                                    <div class="forecast-date">${item.date || 'Unknown Date'}</div>
                                 </div>
-                                <span class="fishing-badge ${item.badgeClass}">${item.fishing_base}</span>
+                                <span class="fishing-badge ${item.badgeClass || 'badge-good'}">${item.fishing_base || 'Good'}</span>
                             </div>
                             <div class="forecast-conditions">
                                 <div class="condition-item">
