@@ -418,15 +418,12 @@ def main():
     
     # Update data
     result = stocking_data.update_stocking_data()
-    print(f"Update result: {result}")
     
     # Get data for Winnipesaukee
     data = stocking_data.get_stocking_data("Winnipesaukee")
-    print(f"Winnipesaukee stocking data: {data}")
     
     # Get update status
     status = stocking_data.get_update_status()
-    print(f"Update status: {status}")
 
 if __name__ == "__main__":
     main()

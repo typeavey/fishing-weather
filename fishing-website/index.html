@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fishing Information Portal</title>
+    <title>NH-VT Trolling Conditions</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -86,21 +86,15 @@
         }
 
         .logo-image {
-            width: 48px;
-            height: 48px;
+            font-size: 3rem;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-            animation: fish-swim 3s ease-in-out infinite;
+            animation: bounce 2s infinite;
         }
 
-        @keyframes fish-swim {
-            0% { transform: translateY(0px) rotate(0deg) scale(1); }
-            15% { transform: translateY(-6px) rotate(15deg) scale(1.05); }
-            30% { transform: translateY(-2px) rotate(-10deg) scale(1.02); }
-            45% { transform: translateY(-8px) rotate(20deg) scale(1.08); }
-            60% { transform: translateY(-1px) rotate(-5deg) scale(1.01); }
-            75% { transform: translateY(-5px) rotate(12deg) scale(1.04); }
-            90% { transform: translateY(-3px) rotate(-8deg) scale(1.03); }
-            100% { transform: translateY(0px) rotate(0deg) scale(1); }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
         }
 
         .logo-text {
@@ -599,7 +593,6 @@
             font-weight: 700;
             color: var(--gray-900);
         }
-        }
 
         .fishing-analysis::before {
             content: '';
@@ -727,7 +720,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggMjRDMCAyNCA0IDI4IDggMjhDMTIgMjggMTYgMjQgMTYgMjRDMCAyNCA0IDIwIDggMjBaIiBmaWxsPSIjMDA0ZGIzIi8+CjxwYXRoIGQ9Ik0xNiAyNEMxNiAyNCAyMCAyOCAyNCAyOEMyOCAyOCAzMiAyNCAzMiAyNEMyOCAyNCAyNCAyMCAyMCAyMEMxNiAyMCAxNiAyNCAxNiAyNFoiIGZpbGw9IiMwMDQ5YjAiLz4KPHBhdGggZD0iTTMyIDI0QzMyIDI0IDM2IDI4IDQwIDI4QzQ0IDI4IDQ4IDI0IDQ4IDI0QzQ0IDIwIDQwIDIwIDM2IDIwQzMyIDIwIDMyIDI0IDMyIDI0WiIgZmlsbD0iIzAwNDliMCIvPgo8cGF0aCBkPSJNMTYgMjRMMjQgMjhMMzIgMjQiIHN0cm9rZT0iIzAwNDliMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Ik0xMiAyNEMxMiAyNCAxNCAyNiAxMiAyOEMxMCAzMCAxMiAzMiAxMiAzMiIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjEiLz4KPHBhdGggZD0iTTM2IDI0QzM2IDI0IDM0IDI2IDM2IDI4QzM4IDMwIDM2IDMyIDM2IDMyIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMjAgMzZDMjAgMzYgMjIgMzQgMjQgMzZDMjYgMzggMjggMzYgMjggMzYiIHN0cm9rZT0iIzAwNDliMCIgc3Ryb2tlLXdpZHRoPSIxIi8+CjxwYXRoIGQ9Ik0yNCAxMkMyNCAxMiAyNiAxNCAyNCAxNkMyMiAxOCAyNCAyMCAyNCAyMCIgc3Ryb2tlPSIjMDA0OWIwIiBzdHJva2Utd2lkdGg9IjEiLz4KPHBhdGggZD0iTTE2IDE2QzE2IDE2IDE4IDE4IDE2IDIwQzE0IDIyIDE2IDI0IDE2IDI0IiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMzIgMTZDMzIgMTYgMzAgMTggMzIgMjBDMzQgMjIgMzIgMjQgMzIgMjQiIHN0cm9rZT0iIzAwNDliMCIgc3Ryb2tlLXdpZHRoPSIxIi8+CjxwYXRoIGQ9Ik0yNCA0QzI0IDQgMjYgNiAyNCA4QzIyIDEwIDI0IDEyIDI0IDEyIiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMTYgOEMxNiA4IDE4IDEwIDE2IDEyQzE0IDE0IDE2IDE2IDE2IDE2IiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMzIgOEMzMiA4IDMwIDEwIDMyIDEyQzM0IDE0IDMyIDE2IDMyIDE2IiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N2Zz4K" alt="Rainbow Trout" class="logo-image">
+                    <div class="logo-image">🎣</div>
                     <div class="logo-text">
                         <a href="/" style="color: white; text-decoration: none;">
                             <div class="logo-title">NH-VT Trolling Conditions</div>
@@ -735,12 +728,13 @@
                         </a>
                     </div>
                 </div>
-                <nav class="nav">
+                                <nav class="nav">
                     <a href="/" class="nav-link">Dashboard</a>
                     <a href="/weather.html" class="nav-link">Weather</a>
                     <a href="/locations.html" class="nav-link">Locations</a>
                     <a href="/forecast.html" class="nav-link">Forecast</a>
                     <a href="/analysis.html" class="nav-link">Analysis</a>
+                    <a href="/guide.html" class="nav-link">Guide</a>
                     <a href="/stocking.html" class="nav-link">Stocking</a>
                 </nav>
             </div>
@@ -956,7 +950,6 @@
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, initializing application...');
             document.title = 'NH-VT Trolling Conditions';
             loadWeatherData();
             loadWaterTemperatureData();
@@ -980,16 +973,11 @@
         
         // Load water temperature data
         async function loadWaterTemperatureData() {
-            console.log('Loading water temperature data...');
             try {
                 const response = await fetch('/api/water-temperature/latest');
-                console.log('Water temp response status:', response.status);
                 if (response.ok) {
                     waterTempData = await response.json();
-                    console.log('Water temp data received:', Object.keys(waterTempData).length, 'lakes');
                     updateWaterTemperatureDisplay();
-                } else {
-                    console.error('Water temp response not ok:', response.status);
                 }
             } catch (error) {
                 console.error('Error loading water temperature data:', error);
@@ -998,14 +986,17 @@
         
         // Update water temperature display
         function updateWaterTemperatureDisplay() {
-            console.log('Updating water temperature display...');
             const waterTempSection = document.getElementById('waterTemperatureSection');
-            if (!waterTempSection) {
-                console.error('Water temperature section not found!');
+            if (!waterTempSection) return;
+            
+            if (Object.keys(waterTempData).length === 0) {
+                waterTempSection.innerHTML = `
+                    <div class="no-data">
+                        <p>Water temperature data is currently unavailable. Please check back later.</p>
+                    </div>
+                `;
                 return;
             }
-            
-            console.log('Water temp data to display:', waterTempData);
             
             let html = '<div class="water-temp-grid">';
             
@@ -1063,18 +1054,13 @@
             `;
 
             try {
-                console.log('Fetching weather data from /api/weather...');
                 const response = await fetch('/api/weather');
-                console.log('Response status:', response.status);
-                console.log('Response ok:', response.ok);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
                 const data = await response.json();
-                console.log('Weather data received:', data.length, 'records');
-                
                 weatherData = data;
                 populateDayFilter();
                 filteredData = [...weatherData];
@@ -1156,6 +1142,10 @@
                                         </span>
                                     </div>
                                     <div class="lake-details">
+                                        <div class="detail-row">
+                                            <span class="detail-label">Water Temperature:</span>
+                                            <span class="detail-value">${item.water_temp ? item.water_temp.toFixed(1) + '°F' : 'Unknown'}</span>
+                                        </div>
                                         <div class="detail-row">
                                             <span class="detail-label">Temperature:</span>
                                             <span class="detail-value">${item.temp ? item.temp.toFixed(1) + '°F' : 'N/A'}</span>

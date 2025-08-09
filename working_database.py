@@ -212,12 +212,9 @@ if __name__ == '__main__':
     
     # Store data
     success = db.store_weather_data([sample_record])
-    print(f"Data stored: {success}")
     
     # Retrieve data
     data = db.get_weather_data(location='Winnipesaukee', limit=5)
-    print(f"Retrieved {len(data)} records")
     
     # Get statistics
     stats = db.get_statistics()
-    print(f"Database statistics: {stats}")

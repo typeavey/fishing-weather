@@ -88,21 +88,15 @@
         }
 
         .logo-image {
-            width: 48px;
-            height: 48px;
+            font-size: 3rem;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-            animation: fish-swim 3s ease-in-out infinite;
+            animation: bounce 2s infinite;
         }
 
-        @keyframes fish-swim {
-            0% { transform: translateY(0px) rotate(0deg) scale(1); }
-            15% { transform: translateY(-6px) rotate(15deg) scale(1.05); }
-            30% { transform: translateY(-2px) rotate(-10deg) scale(1.02); }
-            45% { transform: translateY(-8px) rotate(20deg) scale(1.08); }
-            60% { transform: translateY(-1px) rotate(-5deg) scale(1.01); }
-            75% { transform: translateY(-5px) rotate(12deg) scale(1.04); }
-            90% { transform: translateY(-3px) rotate(-8deg) scale(1.03); }
-            100% { transform: translateY(0px) rotate(0deg) scale(1); }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
         }
 
         .logo-text {
@@ -525,7 +519,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggMjRDMCAyNCA0IDI4IDggMjhDMTIgMjggMTYgMjQgMTYgMjRDMCAyNCA0IDIwIDggMjBaIiBmaWxsPSIjMDA0ZGIzIi8+CjxwYXRoIGQ9Ik0xNiAyNEMxNiAyNCAyMCAyOCAyNCAyOEMyOCAyOCAzMiAyNCAzMiAyNEMyOCAyNCAyNCAyMCAyMCAyMEMxNiAyMCAxNiAyNCAxNiAyNFoiIGZpbGw9IiMwMDQ5YjAiLz4KPHBhdGggZD0iTTMyIDI0QzMyIDI0IDM2IDI4IDQwIDI4QzQ0IDI4IDQ4IDI0IDQ4IDI0QzQ0IDIwIDQwIDIwIDM2IDIwQzMyIDIwIDMyIDI0IDMyIDI0WiIgZmlsbD0iIzAwNDliMCIvPgo8cGF0aCBkPSJNMTYgMjRMMjQgMjhMMzIgMjQiIHN0cm9rZT0iIzAwNDliMCIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Ik0xMiAyNEMxMiAyNCAxNCAyNiAxMiAyOEMxMCAzMCAxMiAzMiAxMiAzMiIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjEiLz4KPHBhdGggZD0iTTM2IDI0QzM2IDI0IDM0IDI2IDM2IDI4QzM4IDMwIDM2IDMyIDM2IDMyIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMjAgMzZDMjAgMzYgMjIgMzQgMjQgMzZDMjYgMzggMjggMzYgMjggMzYiIHN0cm9rZT0iIzAwNDliMCIgc3Ryb2tlLXdpZHRoPSIxIi8+CjxwYXRoIGQ9Ik0yNCAxMkMyNCAxMiAyNiAxNCAyNCAxNkMyMiAxOCAyNCAyMCAyNCAyMCIgc3Ryb2tlPSIjMDA0OWIwIiBzdHJva2Utd2lkdGg9IjEiLz4KPHBhdGggZD0iTTE2IDE2QzE2IDE2IDE4IDE4IDE2IDIwQzE0IDIyIDE2IDI0IDE2IDI0IiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMzIgMTZDMzIgMTYgMzAgMTggMzIgMjBDMzQgMjIgMzIgMjQgMzIgMjQiIHN0cm9rZT0iIzAwNDliMCIgc3Ryb2tlLXdpZHRoPSIxIi8+CjxwYXRoIGQ9Ik0yNCA0QzI0IDQgMjYgNiAyNCA4QzIyIDEwIDI0IDEyIDI0IDEyIiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMTYgOEMxNiA4IDE4IDEwIDE2IDEyQzE0IDE0IDE2IDE2IDE2IDE2IiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMzIgOEMzMiA4IDMwIDEwIDMyIDEyQzM0IDE0IDMyIDE2IDMyIDE2IiBzdHJva2U9IiMwMDQ5YjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N2Zz4K" alt="Rainbow Trout" class="logo-image">
+                    <div class="logo-image">🎣</div>
                     <div class="logo-text">
                         <a href="/" style="color: white; text-decoration: none;">
                             <div class="logo-title">NH-VT Trolling Conditions</div>
@@ -533,12 +527,14 @@
                         </a>
                     </div>
                 </div>
-                <nav class="nav">
+                                <nav class="nav">
                     <a href="/" class="nav-link">Dashboard</a>
                     <a href="/weather.html" class="nav-link">Weather</a>
                     <a href="/locations.html" class="nav-link">Locations</a>
                     <a href="/forecast.html" class="nav-link">Forecast</a>
                     <a href="/analysis.html" class="nav-link">Analysis</a>
+                    <a href="/guide.html" class="nav-link">Guide</a>
+                    <a href="/stocking.html" class="nav-link">Stocking</a>
                 </nav>
             </div>
         </div>
@@ -635,21 +631,19 @@
                 // Generate sample data directly (no API dependency)
                 try {
                     analysisData = generateSampleAnalysisData(waterTempData);
-                    console.log('Sample analysis data generated:', analysisData.length, 'items');
                 } catch (sampleError) {
                     console.error('Error generating sample data:', sampleError);
                     throw new Error('Failed to generate sample data: ' + sampleError.message);
                 }
 
                 filteredAnalysis = [...analysisData];
-                console.log('Analysis data loaded:', analysisData.length, 'items');
                 updateFilters();
                 renderAnalysisData();
             } catch (error) {
                 console.error('Error in loadAnalysisData:', error);
                 analysisContent.innerHTML = `
                     <div class="error-message">
-                        <p>Error loading analysis data: ${error.message}</p>
+                        <p>Error loading analysis data. Please try again.</p>
                         <button class="btn btn-primary" onclick="loadAnalysisData()">Retry</button>
                     </div>
                 `;
@@ -675,15 +669,15 @@
                 { label: 'Stay Home (1-2/10)', class: 'status-stay-home', base: 1, rating: 1 }
             ];
 
-            // Sample water temperatures for August (realistic values)
+            // Sample water temperatures for August (realistic values for NH/VT lakes)
             const waterTemps = {
-                'Winnipesaukee': 68.6,
-                'Newfound': 65.3,
-                'Squam': 71.1,
-                'Champlain': 78.4,
-                'Mascoma': 80.9,
-                'Sunapee': 72.7,
-                'First Connecticut': 82.6
+                'Winnipesaukee': 67.2,  // Large, deep lake - moderate temps
+                'Newfound': 62.8,       // Deep, clear lake - cooler temps
+                'Squam': 65.4,          // Deep, clear lake - moderate temps
+                'Champlain': 72.1,      // Large lake - warmer surface temps
+                'Mascoma': 69.8,        // Smaller lake - moderate temps
+                'Sunapee': 64.3,        // Deep, clear lake - cooler temps
+                'First Connecticut': 71.5  // River system - warmer temps
             };
 
             const data = [];
@@ -697,7 +691,7 @@
                 const pressure = parseFloat((Math.random() * 2 + 29.5).toFixed(2));
                 const humidity = Math.floor(Math.random() * 30) + 40;
                 const visibility = Math.floor(Math.random() * 5) + 5;
-                const waterTemp = waterTempData[location]?.temperature_fahrenheit || waterTemps[location] || 70;
+                const waterTemp = waterTempData[location]?.temperature_fahrenheit || null;
 
                 // Generate date for today and next few days
                 const date = new Date(today);
@@ -732,7 +726,7 @@
 
         // Generate lake summary
         function generateLakeSummary(location, rating, temp, windSpeed, pressure, humidity, waterTemp = null) {
-            const waterTempInfo = waterTemp ? ` Water temperature is ${waterTemp}°F, with salmonids likely holding in the thermocline zone (${waterTemp >= 70 ? '30-35 feet' : waterTemp >= 65 ? '25-30 feet' : '20-25 feet'}).` : '';
+            const waterTempInfo = waterTemp ? ` Water temperature is ${waterTemp}°F, with salmonids likely holding in the thermocline zone (${waterTemp >= 70 ? '30-35 feet' : waterTemp >= 65 ? '25-30 feet' : '20-25 feet'}).` : ' Water temperature is unknown.';
             
             const summaries = {
                 10: `Perfect fishing conditions at ${location}! The combination of moderate temperatures (${temp}°F), light winds (${windSpeed} mph), and stable atmospheric pressure (${pressure} inHg) creates ideal conditions for salmonid trolling.${waterTempInfo} The water clarity is excellent with ${humidity}% humidity, making it perfect for trolling. Expect active Rainbow Trout, Salmon, and Lake Trout throughout the day.`,
@@ -777,10 +771,14 @@
             
             // Determine trolling speed based on conditions
             function getTrollingSpeed(rating, waterTemp) {
-                if (waterTemp && waterTemp >= 75) {
+                if (!waterTemp) {
+                    return rating >= 8 ? '2.0-2.5 mph' : '1.5-2.0 mph'; // Default speed when water temp unknown
+                }
+                
+                if (waterTemp >= 75) {
                     // Warm water - fish are less active
                     return rating >= 8 ? '1.5-2.0 mph' : '1.0-1.5 mph';
-                } else if (waterTemp && waterTemp >= 70) {
+                } else if (waterTemp >= 70) {
                     return rating >= 8 ? '2.0-2.5 mph' : '1.5-2.0 mph';
                 } else {
                     return rating >= 8 ? '2.5-3.0 mph' : '2.0-2.5 mph';
@@ -873,87 +871,28 @@
                     `🐟 Target Species: Focus on Lake Trout (more tolerant)`
                 ],
                 2: [
-                    `❌ Conditions too poor for safe/effective trolling`,
-                    `🌊 High winds create dangerous boating conditions`,
-                    `🐟 Fish are likely inactive due to weather stress`,
-                    `⏰ Wait for calmer weather windows`,
-                    `📊 Monitor weather forecasts for better conditions`,
-                    `🔧 Use time to prepare equipment and plan routes`,
-                    `📱 Check multiple weather sources for accuracy`,
-                    `🎣 Consider shore fishing if conditions permit`
+                    `🎯 Target Depth: ${optimalDepth} (deeper due to poor conditions)`,
+                    `⚡ Trolling Speed: ${trollingSpeed} - slow and steady approach`,
+                    `🪱 Lure Selection: Use larger, more visible lures with rattles`,
+                    `📍 Location: Seek protected coves and leeward shores`,
+                    `⏰ Timing: Wait for weather windows, avoid high winds`,
+                    waterTemp ? `🌡️ Water Temp: ${waterTemp}°F - fish may be deeper` : '🌡️ Monitor water temperature changes',
+                    `🎣 Technique: Use heavy tackle and multiple lines`,
+                    `🐟 Target Species: Focus on Lake Trout (more tolerant)`
                 ],
                 1: [
-                    `❌ Conditions too poor for safe/effective trolling`,
-                    `🌊 High winds create dangerous boating conditions`,
-                    `🐟 Fish are likely inactive due to weather stress`,
-                    `⏰ Wait for calmer weather windows`,
-                    `📊 Monitor weather forecasts for better conditions`,
-                    `🔧 Use time to prepare equipment and plan routes`,
-                    `📱 Check multiple weather sources for accuracy`,
-                    `🎣 Consider shore fishing if conditions permit`
+                    `🎯 Target Depth: ${optimalDepth} (deeper due to poor conditions)`,
+                    `⚡ Trolling Speed: ${trollingSpeed} - slow and steady approach`,
+                    `🪱 Lure Selection: Use larger, more visible lures with rattles`,
+                    `📍 Location: Seek protected coves and leeward shores`,
+                    `⏰ Timing: Wait for weather windows, avoid high winds`,
+                    waterTemp ? `🌡️ Water Temp: ${waterTemp}°F - fish may be deeper` : '🌡️ Monitor water temperature changes',
+                    `🎣 Technique: Use heavy tackle and multiple lines`,
+                    `🐟 Target Species: Focus on Lake Trout (more tolerant)`
                 ]
             };
             
             return recommendations[rating] || recommendations[6];
-        }
-
-        // Update filters
-        function updateFilters() {
-            const locationFilter = document.getElementById('locationFilter');
-            const conditionFilter = document.getElementById('conditionFilter');
-            
-            // Clear existing options
-            locationFilter.innerHTML = '<option value="">All Locations</option>';
-            
-            // Get unique locations
-            const locations = [...new Set(analysisData.map(item => item.location))];
-            locations.forEach(location => {
-                const option = document.createElement('option');
-                option.value = location;
-                option.textContent = location;
-                locationFilter.appendChild(option);
-            });
-        }
-
-        // Filter analysis data
-        function filterAnalysis() {
-            const locationFilter = document.getElementById('locationFilter').value;
-            const conditionFilter = document.getElementById('conditionFilter').value;
-
-            filteredAnalysis = analysisData.filter(item => {
-                const locationMatch = !locationFilter || item.location === locationFilter;
-                const conditionMatch = !conditionFilter || item.condition_base == conditionFilter; // Use == for type coercion
-                return locationMatch && conditionMatch;
-            });
-
-            renderAnalysisData();
-        }
-
-        // Get status class based on numeric rating
-        function getStatusClass(rating) {
-            if (typeof rating === 'number') {
-                if (rating >= 8) return 'status-great';
-                if (rating >= 6) return 'status-good';
-                if (rating >= 4) return 'status-fair';
-                return 'status-poor';
-            }
-            return 'status-good';
-        }
-
-        // Get rating label based on numeric rating
-        function getRatingLabel(rating) {
-            if (typeof rating === 'number') {
-                if (rating >= 9) return 'Excellent';
-                if (rating >= 8) return 'Great';
-                if (rating >= 7) return 'Good';
-                if (rating >= 6) return 'Fair';
-                if (rating >= 5) return 'Moderate';
-                if (rating >= 4) return 'Poor';
-                if (rating >= 3) return 'Difficult';
-                if (rating >= 2) return 'Very Difficult';
-                return 'Stay Home';
-            }
-            return 'Good';
         }
 
         // Render analysis data
@@ -972,54 +911,61 @@
             let html = '<div class="analysis-grid">';
             
             filteredAnalysis.forEach(item => {
+                const waterTempDisplay = item.water_temp ? `${item.water_temp.toFixed(1)}°F` : 'Unknown';
+                
                 html += `
                     <div class="analysis-card">
                         <div class="lake-header">
                             <div class="lake-info">
-                                <div class="lake-name">${item.location}</div>
-                                <div class="lake-date">${item.date || 'Today'}</div>
+                                <h3 class="lake-name">${item.location}</h3>
+                                <span class="lake-date">${item.date}</span>
                             </div>
-                            <div class="lake-status ${getStatusClass(item.condition_base)}">
-                                <span class="rating-number">${item.condition_base}/10</span>
-                                <span class="rating-label">${getRatingLabel(item.condition_base)}</span>
+                            <div class="lake-status ${item.status_class}">
+                                <div class="rating-number">${item.condition_base}/10</div>
+                                <div class="rating-label">${item.condition.split(' ')[0]}</div>
                             </div>
                         </div>
                         
                         <div class="analysis-content">
+                            <div class="analysis-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">Air Temperature:</span>
+                                    <span class="detail-value">${item.temp}°F</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Water Temperature:</span>
+                                    <span class="detail-value">${waterTempDisplay}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Wind Speed:</span>
+                                    <span class="detail-value">${item.wind_speed} mph</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Wind Gust:</span>
+                                    <span class="detail-value">${item.wind_gust} mph</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Pressure:</span>
+                                    <span class="detail-value">${item.pressure} inHg</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Humidity:</span>
+                                    <span class="detail-value">${item.humidity}%</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Visibility:</span>
+                                    <span class="detail-value">${item.visibility} mi</span>
+                                </div>
+                            </div>
+                            
                             <div class="analysis-summary">
-                                ${item.summary}
+                                <h4>Analysis Summary</h4>
+                                <p>${item.summary}</p>
                             </div>
                             
-                            <div class="conditions-grid">
-                                <div class="condition-item">
-                                    <span class="condition-label">Air Temperature</span>
-                                    <span class="condition-value">${item.temp}°F</span>
-                                </div>
-                                <div class="condition-item">
-                                    <span class="condition-label">Water Temperature</span>
-                                    <span class="condition-value">${item.water_temp ? item.water_temp.toFixed(1) + '°F' : 'N/A'}</span>
-                                </div>
-                                <div class="condition-item">
-                                    <span class="condition-label">Wind Speed</span>
-                                    <span class="condition-value">${item.wind_speed} mph</span>
-                                </div>
-                                <div class="condition-item">
-                                    <span class="condition-label">Wind Gust</span>
-                                    <span class="condition-value">${item.wind_gust} mph</span>
-                                </div>
-                                <div class="condition-item">
-                                    <span class="condition-label">Pressure</span>
-                                    <span class="condition-value">${item.pressure} inHg</span>
-                                </div>
-                                <div class="condition-item">
-                                    <span class="condition-label">Humidity</span>
-                                    <span class="condition-value">${item.humidity}%</span>
-                                </div>
-                            </div>
-                            
-                            <div class="fishing-recommendations">
-                                <div class="recommendations-title">Fishing Recommendations</div>
-                                <ul class="recommendations-list">
+                            <div class="analysis-recommendations">
+                                <h4>Recommendations</h4>
+                                <ul>
                                     ${item.recommendations.map(rec => `<li>${rec}</li>`).join('')}
                                 </ul>
                             </div>
@@ -1027,9 +973,36 @@
                     </div>
                 `;
             });
-
+            
             html += '</div>';
             analysisContent.innerHTML = html;
+        }
+
+        // Update filters
+        function updateFilters() {
+            const locationFilter = document.getElementById('locationFilter');
+            const conditionFilter = document.getElementById('conditionFilter');
+            
+            // Update location filter
+            const locations = [...new Set(analysisData.map(item => item.location))];
+            locationFilter.innerHTML = '<option value="">All Locations</option>';
+            locations.forEach(location => {
+                locationFilter.innerHTML += `<option value="${location}">${location}</option>`;
+            });
+        }
+
+        // Filter analysis data
+        function filterAnalysis() {
+            const locationFilter = document.getElementById('locationFilter').value;
+            const conditionFilter = document.getElementById('conditionFilter').value;
+            
+            filteredAnalysis = analysisData.filter(item => {
+                const locationMatch = !locationFilter || item.location === locationFilter;
+                const conditionMatch = !conditionFilter || item.condition_base.toString() === conditionFilter;
+                return locationMatch && conditionMatch;
+            });
+            
+            renderAnalysisData();
         }
     </script>
 </body>

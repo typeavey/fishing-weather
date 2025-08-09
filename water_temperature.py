@@ -214,15 +214,15 @@ class WaterTemperatureData:
         # Peak water temp typically occurs in August (day ~220)
         seasonal_factor = math.cos((day_of_year - 220) * 2 * math.pi / 365)
         
-        # Lake-specific adjustments
+        # Lake-specific adjustments (more realistic for NH/VT lakes)
         lake_adjustments = {
-            "Winnipesaukee": {"base_temp": 16, "seasonal_range": 13, "depth_factor": 0.8},
-            "Newfound": {"base_temp": 15, "seasonal_range": 12, "depth_factor": 0.7},
-            "Squam": {"base_temp": 16, "seasonal_range": 13, "depth_factor": 0.8},  # More realistic for Squam
-            "Champlain": {"base_temp": 17, "seasonal_range": 14, "depth_factor": 0.9},
-            "Mascoma": {"base_temp": 18, "seasonal_range": 15, "depth_factor": 1.0},
-            "Sunapee": {"base_temp": 15, "seasonal_range": 12, "depth_factor": 0.7},
-            "First Connecticut": {"base_temp": 19, "seasonal_range": 16, "depth_factor": 1.1},
+            "Winnipesaukee": {"base_temp": 12, "seasonal_range": 10, "depth_factor": 0.8},  # Large, deep lake
+            "Newfound": {"base_temp": 11, "seasonal_range": 9, "depth_factor": 0.7},        # Deep, clear lake
+            "Squam": {"base_temp": 12, "seasonal_range": 10, "depth_factor": 0.8},          # Deep, clear lake
+            "Champlain": {"base_temp": 14, "seasonal_range": 11, "depth_factor": 0.9},      # Large lake
+            "Mascoma": {"base_temp": 13, "seasonal_range": 10, "depth_factor": 1.0},       # Smaller lake
+            "Sunapee": {"base_temp": 11, "seasonal_range": 9, "depth_factor": 0.7},        # Deep, clear lake
+            "First Connecticut": {"base_temp": 15, "seasonal_range": 12, "depth_factor": 1.1},  # River system
         }
         
         lake_adj = lake_adjustments.get(lake_name, {"base_temp": 15, "seasonal_range": 12, "depth_factor": 0.8})
@@ -292,15 +292,15 @@ class WaterTemperatureData:
         logger.info("Starting water temperature update")
         
         if air_temperatures is None:
-            # More realistic August air temperatures for NH/VT lakes
+            # Realistic August air temperatures for NH/VT lakes
             air_temperatures = {
-                "Winnipesaukee": 26.0,  # ~79°F
-                "Newfound": 25.5,       # ~78°F
-                "Squam": 25.0,          # ~77°F
-                "Champlain": 27.0,      # ~81°F
-                "Mascoma": 26.5,        # ~80°F
-                "Sunapee": 25.8,        # ~78°F
-                "First Connecticut": 24.5, # ~76°F
+                "Winnipesaukee": 24.0,  # ~75°F
+                "Newfound": 23.5,       # ~74°F
+                "Squam": 23.0,          # ~73°F
+                "Champlain": 25.0,      # ~77°F
+                "Mascoma": 24.5,        # ~76°F
+                "Sunapee": 23.8,        # ~75°F
+                "First Connecticut": 23.0, # ~73°F
             }
         
         records_updated = 0
@@ -428,32 +428,19 @@ def main():
     water_temp = WaterTemperatureData()
     
     # Test USGS data
-    print("Testing USGS data...")
     usgs_record = water_temp.fetch_usgs_temperature("Champlain")
-    if usgs_record:
-        print(f"USGS Champlain: {usgs_record.temperature_celsius}°C ({usgs_record.temperature_fahrenheit}°F)")
     
     # Test NOAA data
-    print("Testing NOAA data...")
     noaa_record = water_temp.fetch_noaa_temperature("Champlain")
-    if noaa_record:
-        print(f"NOAA Champlain: {noaa_record.temperature_celsius}°C ({noaa_record.temperature_fahrenheit}°F)")
     
     # Test estimation
-    print("Testing estimation...")
     estimated = water_temp.estimate_temperature("Winnipesaukee", 22.0, datetime.date.today())
-    print(f"Estimated Winnipesaukee: {estimated.temperature_celsius}°C ({estimated.temperature_fahrenheit}°F)")
     
     # Update all temperatures
-    print("Updating all temperatures...")
     result = water_temp.update_water_temperatures()
-    print(f"Update result: {result}")
     
     # Get latest temperatures
-    print("Latest temperatures:")
     latest = water_temp.get_latest_temperatures()
-    for lake, data in latest.items():
-        print(f"{lake}: {data['temperature_celsius']}°C ({data['temperature_fahrenheit']}°F) - {data['source']}")
 
 if __name__ == "__main__":
     main()
