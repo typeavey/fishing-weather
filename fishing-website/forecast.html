@@ -519,16 +519,7 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Condition Filter</label>
-                        <select class="form-select" id="conditionSelect">
-                            <option value="">All Conditions</option>
-                            <option value="Fair Fishing">Fair Fishing</option>
-                            <option value="Good Fishing">Good Fishing</option>
-                            <option value="Poor Fishing">Poor Fishing</option>
-                            <option value="Excellent Fishing">Excellent Fishing</option>
-                        </select>
-                    </div>
+
                     <div class="form-group">
                         <label class="form-label">&nbsp;</label>
                         <button class="btn btn-primary" id="updateForecastBtn">
@@ -599,7 +590,6 @@
         function setupEventListeners() {
             document.getElementById('updateForecastBtn').addEventListener('click', loadForecastData);
             document.getElementById('locationSelect').addEventListener('change', filterData);
-            document.getElementById('conditionSelect').addEventListener('change', filterData);
             document.getElementById('dateRangeSelect').addEventListener('change', filterData);
         }
 
@@ -718,12 +708,10 @@
         // Filter data based on selected filters
         function filterData() {
             const locationFilter = document.getElementById('locationSelect').value;
-            const conditionFilter = document.getElementById('conditionSelect').value;
             const dateRangeFilter = document.getElementById('dateRangeSelect').value;
 
             filteredData = forecastData.filter(item => {
                 const locationMatch = !locationFilter || item.location === locationFilter;
-                const conditionMatch = !conditionFilter || item.fishing_base === conditionFilter;
                 
                 // Date range filter logic
                 let dateRangeMatch = true;
@@ -739,7 +727,7 @@
                     }
                 }
                 
-                return locationMatch && conditionMatch && dateRangeMatch;
+                return locationMatch && dateRangeMatch;
             });
 
             renderForecastData();
