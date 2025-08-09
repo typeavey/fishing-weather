@@ -631,7 +631,13 @@
                 try {
                     const response = await fetch('/api/weather');
                     if (response.ok) {
-                        forecastData = await response.json();
+                        const apiData = await response.json();
+                        // Transform API data to match expected format
+                        forecastData = apiData.map(item => ({
+                            ...item,
+                            date: item.date_str || item.date, // Use date_str from API
+                            location: item.location || 'Unknown Location'
+                        }));
                     } else {
                         // Fallback to static data
                         const staticResponse = await fetch('/weather-data.json');
