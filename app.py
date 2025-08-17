@@ -81,7 +81,13 @@ def get_forecast():
     try:
         conn = sqlite3.connect(WEATHER_DB)
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM weather_data WHERE date >= date('now') LIMIT 50")
+        # Use date_ts (timestamp) instead of non-existent date column
+        # Get current timestamp and data from last 8 days (forecast period)
+        import time
+        current_timestamp = int(time.time())
+        eight_days_ago = current_timestamp - (8 * 24 * 60 * 60)  # 8 days ago
+        
+        cursor.execute("SELECT * FROM weather_data WHERE date_ts >= ? ORDER BY date_ts DESC LIMIT 50", (eight_days_ago,))
         rows = cursor.fetchall()
         
         columns = [description[0] for description in cursor.description]
