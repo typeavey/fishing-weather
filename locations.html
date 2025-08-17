@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishing Locations - NH-VT Trolling Conditions</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background-color: var(--gray-50);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6, #60a5fa, #93c5fd);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                rgba(34, 197, 94, 0.1) 0%, 
+                rgba(59, 130, 246, 0.2) 25%, 
+                rgba(147, 51, 234, 0.1) 50%, 
+                rgba(236, 72, 153, 0.1) 75%, 
+                rgba(34, 197, 94, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo-image {
+            font-size: 3rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-subtitle {
+            font-size: 0.875rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: -2px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .nav-link:hover {
+            opacity: 0.8;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gray-900);
+        }
+
+        .page-subtitle {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+        }
+
+        /* Location Cards */
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .location-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+        }
+
+        .location-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .location-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-shrink: 0;
+        }
+
+        .location-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .location-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.125rem;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            flex-shrink: 0;
+        }
+
+        .location-details {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .location-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--gray-100);
+            gap: 1rem;
+        }
+
+        .location-detail:last-child {
+            border-bottom: none;
+        }
+
+        .location-detail-label {
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+            min-width: 80px;
+        }
+
+        .location-detail-value {
+            font-weight: 600;
+            color: var(--gray-900);
+            font-size: 0.875rem;
+            text-align: right;
+            word-break: break-word;
+            hyphens: auto;
+        }
+
+        .location-description {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .location-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: auto;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        /* Map Section */
+        .map-section {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
+        }
+
+        .map-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+        }
+
+        .map-placeholder {
+            background: var(--gray-100);
+            border-radius: 0.5rem;
+            padding: 3rem;
+            text-align: center;
+            color: var(--gray-500);
+        }
+
+        .map-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .locations-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .location-card {
+                padding: 1rem;
+            }
+            
+            .location-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .location-details {
+                gap: 0.5rem;
+            }
+            
+            .location-detail {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+            
+            .location-detail-label {
+                min-width: auto;
+                font-size: 0.8rem;
+            }
+            
+            .location-detail-value {
+                text-align: left;
+                font-size: 0.8rem;
+            }
+            
+            .location-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .action-btn {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .page-subtitle {
+                font-size: 1rem;
+            }
+            
+            .location-name {
+                font-size: 1.125rem;
+            }
+            
+            .location-description {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-image">🎣</div>
+                    <div class="logo-text">
+                        <a href="/" style="color: white; text-decoration: none;">
+                            <div class="logo-title">NH-VT Trolling Conditions</div>
+                            <div class="logo-subtitle">Real-time Fishing Intelligence</div>
+                        </a>
+                    </div>
+                </div>
+                                <nav class="nav">
+                    <a href="/" class="nav-link">Dashboard</a>
+                    <a href="/weather.html" class="nav-link">Weather</a>
+                    <a href="/locations.html" class="nav-link">Locations</a>
+                    <a href="/forecast.html" class="nav-link">Forecast</a>
+                    <a href="/analysis.html" class="nav-link">Analysis</a>
+                    <a href="/guide.html" class="nav-link">Guide</a>
+                    <a href="/stocking.html" class="nav-link">Stocking</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <h1 class="page-title">Fishing Locations</h1>
+            <p class="page-subtitle">Explore our prime fishing locations and get detailed information about each spot</p>
+
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Total Locations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Great Conditions Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Good Conditions Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">Tough Conditions Today</div>
+                </div>
+            </div>
+
+            <!-- Locations Grid -->
+            <div class="locations-grid">
+                <div class="location-card">
+                    <div class="location-header">
+                        <h3 class="location-name">Lake Winnipesaukee</h3>
+                        <div class="location-icon">
+                            <i class="fas fa-water"></i>
+                        </div>
+                    </div>
+                    <div class="location-details">
+                        <div class="location-detail">
+                            <span class="location-detail-label">Coordinates:</span>
+                            <span class="location-detail-value">43.6406°N, 72.1440°W</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Size:</span>
+                            <span class="location-detail-value">71 sq mi</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Max Depth:</span>
+                            <span class="location-detail-value">212 ft</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Fish Species:</span>
+                            <span class="location-detail-value">Bass, Trout, Salmon</span>
+                        </div>
+                    </div>
+                    <p class="location-description">
+                        New Hampshire's largest lake, known for excellent bass fishing and scenic beauty. 
+                        Popular for both recreational fishing and tournament angling.
+                    </p>
+                    <div class="location-actions">
+                        <a href="/weather.html?location=Winnipesaukee" class="action-btn btn-primary">
+                            <i class="fas fa-cloud-sun"></i>
+                            View Weather
+                        </a>
+                        <a href="#" class="action-btn btn-secondary">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Get Directions
+                        </a>
+                    </div>
+                </div>
+
+                <div class="location-card">
+                    <div class="location-header">
+                        <h3 class="location-name">Newfound Lake</h3>
+                        <div class="location-icon">
+                            <i class="fas fa-water"></i>
+                        </div>
+                    </div>
+                    <div class="location-details">
+                        <div class="location-detail">
+                            <span class="location-detail-label">Coordinates:</span>
+                            <span class="location-detail-value">43.7528°N, 71.7999°W</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Size:</span>
+                            <span class="location-detail-value">4,106 acres</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Max Depth:</span>
+                            <span class="location-detail-value">183 ft</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Fish Species:</span>
+                            <span class="location-detail-value">Lake Trout, Salmon</span>
+                        </div>
+                    </div>
+                    <p class="location-description">
+                        Crystal clear lake known for its pristine water quality and excellent trout fishing. 
+                        Perfect for both shore and boat fishing.
+                    </p>
+                    <div class="location-actions">
+                        <a href="/weather.html?location=Newfound" class="action-btn btn-primary">
+                            <i class="fas fa-cloud-sun"></i>
+                            View Weather
+                        </a>
+                        <a href="#" class="action-btn btn-secondary">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Get Directions
+                        </a>
+                    </div>
+                </div>
+
+                <div class="location-card">
+                    <div class="location-header">
+                        <h3 class="location-name">Squam Lake</h3>
+                        <div class="location-icon">
+                            <i class="fas fa-water"></i>
+                        </div>
+                    </div>
+                    <div class="location-details">
+                        <div class="location-detail">
+                            <span class="location-detail-label">Coordinates:</span>
+                            <span class="location-detail-value">43.8280°N, 71.5503°W</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Size:</span>
+                            <span class="location-detail-value">6,791 acres</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Max Depth:</span>
+                            <span class="location-detail-value">99 ft</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Fish Species:</span>
+                            <span class="location-detail-value">Bass, Pike, Perch</span>
+                        </div>
+                    </div>
+                    <p class="location-description">
+                        Beautiful lake featured in the movie "On Golden Pond." Known for excellent bass 
+                        fishing and peaceful surroundings.
+                    </p>
+                    <div class="location-actions">
+                        <a href="/weather.html?location=Squam" class="action-btn btn-primary">
+                            <i class="fas fa-cloud-sun"></i>
+                            View Weather
+                        </a>
+                        <a href="#" class="action-btn btn-secondary">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Get Directions
+                        </a>
+                    </div>
+                </div>
+
+                <div class="location-card">
+                    <div class="location-header">
+                        <h3 class="location-name">Lake Champlain</h3>
+                        <div class="location-icon">
+                            <i class="fas fa-water"></i>
+                        </div>
+                    </div>
+                    <div class="location-details">
+                        <div class="location-detail">
+                            <span class="location-detail-label">Coordinates:</span>
+                            <span class="location-detail-value">44.4896°N, 73.3582°W</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Size:</span>
+                            <span class="location-detail-value">490 sq mi</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Max Depth:</span>
+                            <span class="location-detail-value">400 ft</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Fish Species:</span>
+                            <span class="location-detail-value">Bass, Pike, Walleye</span>
+                        </div>
+                    </div>
+                    <p class="location-description">
+                        Large lake bordering Vermont and New York. Excellent for bass fishing and 
+                        known for its diverse fish population.
+                    </p>
+                    <div class="location-actions">
+                        <a href="/weather.html?location=Champlain" class="action-btn btn-primary">
+                            <i class="fas fa-cloud-sun"></i>
+                            View Weather
+                        </a>
+                        <a href="#" class="action-btn btn-secondary">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Get Directions
+                        </a>
+                    </div>
+                </div>
+
+                <div class="location-card">
+                    <div class="location-header">
+                        <h3 class="location-name">Mascoma Lake</h3>
+                        <div class="location-icon">
+                            <i class="fas fa-water"></i>
+                        </div>
+                    </div>
+                    <div class="location-details">
+                        <div class="location-detail">
+                            <span class="location-detail-label">Coordinates:</span>
+                            <span class="location-detail-value">43.6587°N, 72.3200°W</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Size:</span>
+                            <span class="location-detail-value">1,000 acres</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Max Depth:</span>
+                            <span class="location-detail-value">45 ft</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Fish Species:</span>
+                            <span class="location-detail-value">Bass, Perch, Sunfish</span>
+                        </div>
+                    </div>
+                    <p class="location-description">
+                        Smaller lake perfect for family fishing. Known for good bass fishing and 
+                        easy access for shore fishing.
+                    </p>
+                    <div class="location-actions">
+                        <a href="/weather.html?location=Mascoma" class="action-btn btn-primary">
+                            <i class="fas fa-cloud-sun"></i>
+                            View Weather
+                        </a>
+                        <a href="#" class="action-btn btn-secondary">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Get Directions
+                        </a>
+                    </div>
+                </div>
+
+                <div class="location-card">
+                    <div class="location-header">
+                        <h3 class="location-name">Lake Sunapee</h3>
+                        <div class="location-icon">
+                            <i class="fas fa-water"></i>
+                        </div>
+                    </div>
+                    <div class="location-details">
+                        <div class="location-detail">
+                            <span class="location-detail-label">Coordinates:</span>
+                            <span class="location-detail-value">43.3770°N, 72.0850°W</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Size:</span>
+                            <span class="location-detail-value">4,085 acres</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Max Depth:</span>
+                            <span class="location-detail-value">105 ft</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Fish Species:</span>
+                            <span class="location-detail-value">Salmon, Trout, Bass</span>
+                        </div>
+                    </div>
+                    <p class="location-description">
+                        Popular lake known for excellent salmon and trout fishing. Clear waters 
+                        and beautiful mountain views make it a favorite destination.
+                    </p>
+                    <div class="location-actions">
+                        <a href="/weather.html?location=Sunapee" class="action-btn btn-primary">
+                            <i class="fas fa-cloud-sun"></i>
+                            View Weather
+                        </a>
+                        <a href="#" class="action-btn btn-secondary">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Get Directions
+                        </a>
+                    </div>
+                </div>
+
+                <div class="location-card">
+                    <div class="location-header">
+                        <h3 class="location-name">First Connecticut Lake</h3>
+                        <div class="location-icon">
+                            <i class="fas fa-water"></i>
+                        </div>
+                    </div>
+                    <div class="location-details">
+                        <div class="location-detail">
+                            <span class="location-detail-label">Coordinates:</span>
+                            <span class="location-detail-value">45.0926°N, 71.2478°W</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Size:</span>
+                            <span class="location-detail-value">3,000 acres</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Max Depth:</span>
+                            <span class="location-detail-value">150 ft</span>
+                        </div>
+                        <div class="location-detail">
+                            <span class="location-detail-label">Fish Species:</span>
+                            <span class="location-detail-value">Salmon, Trout, Bass</span>
+                        </div>
+                    </div>
+                    <p class="location-description">
+                        Northern lake known for excellent salmon and trout fishing. Remote location 
+                        offers peaceful fishing experience.
+                    </p>
+                    <div class="location-actions">
+                        <a href="/weather.html?location=First Connecticut" class="action-btn btn-primary">
+                            <i class="fas fa-cloud-sun"></i>
+                            View Weather
+                        </a>
+                        <a href="#" class="action-btn btn-secondary">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Get Directions
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Section -->
+            <div class="map-section">
+                <h2 class="map-title">Location Map</h2>
+                <div class="map-placeholder">
+                    <i class="fas fa-map"></i>
+                    <p>Interactive map coming soon!</p>
+                    <p>View all fishing locations on an interactive map with weather overlays.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

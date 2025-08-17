@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fishing Weather Components Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+            background: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        .demo-section h2 {
+            color: #1e293b;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .demo-section p {
+            color: #475569;
+            margin-bottom: 1.5rem;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        .iframe-container {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .iframe-container iframe {
+            width: 100%;
+            border: none;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .feature h3 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            color: #475569;
+            margin: 0;
+        }
+
+        .cta {
+            text-align: center;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+
+        .cta h2 {
+            margin-bottom: 1rem;
+        }
+
+        .cta a {
+            display: inline-block;
+            background: white;
+            color: #3b82f6;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .cta a:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎣 Fishing Weather Components Demo</h1>
+            <p>See how easy it is to embed weather data into your website</p>
+        </div>
+
+        <div class="demo-section">
+            <h2>Weather Module</h2>
+            <p>Full-featured weather module with filtering and refresh capabilities. Perfect for dedicated weather pages or dashboards.</p>
+            
+            <div class="code-block">
+&lt;iframe src="http://localhost:5000/weather-module" 
+        width="100%" 
+        height="600px" 
+        frameborder="0"&gt;
+&lt;/iframe&gt;
+            </div>
+
+            <div class="iframe-container">
+                <iframe src="http://localhost:5000/weather-module" 
+                        width="100%" 
+                        height="600px" 
+                        frameborder="0">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Weather Widget</h2>
+            <p>Compact weather widget perfect for sidebars, headers, or any space-constrained area.</p>
+            
+            <div class="code-block">
+&lt;iframe src="http://localhost:5000/weather-widget" 
+        width="400px" 
+        height="300px" 
+        frameborder="0"&gt;
+&lt;/iframe&gt;
+            </div>
+
+            <div class="iframe-container" style="max-width: 400px;">
+                <iframe src="http://localhost:5000/weather-widget" 
+                        width="400px" 
+                        height="300px" 
+                        frameborder="0">
+                </iframe>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>API Integration</h2>
+            <p>Use our REST API to integrate weather data directly into your applications.</p>
+            
+            <div class="code-block">
+// Fetch all weather data
+fetch('/api/weather')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+// Fetch forecast for specific location
+fetch('/api/forecast?location=Winnipesaukee')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+// Get all available locations
+fetch('/api/locations')
+  .then(response => response.json())
+  .then(data => console.log(data));
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h3>🚀 Real-time Data</h3>
+                <p>Weather data is updated every 5 minutes with automatic caching for optimal performance.</p>
+            </div>
+            <div class="feature">
+                <h3>🎨 Customizable</h3>
+                <p>Easy to customize with CSS variables and modular components that fit any design.</p>
+            </div>
+            <div class="feature">
+                <h3>📱 Responsive</h3>
+                <p>All components are mobile-responsive and work seamlessly across all devices.</p>
+            </div>
+            <div class="feature">
+                <h3>🔧 Easy Integration</h3>
+                <p>Simple iframe embedding or REST API integration for any web application.</p>
+            </div>
+        </div>
+
+        <div class="cta">
+            <h2>Ready to Get Started?</h2>
+            <p>Start your own fishing information portal today!</p>
+            <a href="http://localhost:5000">Launch Portal</a>
+        </div>
+    </div>
+</body>
+</html>
