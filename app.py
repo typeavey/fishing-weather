@@ -18,6 +18,22 @@ WEATHER_DB = "sqlite_db/weather_data.db"
 STOCKING_DB = "sqlite_db/stocking_data.db"
 WATER_TEMP_DB = "sqlite_db/water_temperature.db"
 
+def cleanup_old_weather_data():
+    """Clean up weather data older than 30 days"""
+    try:
+        from working_database import WorkingWeatherDatabase
+        db = WorkingWeatherDatabase()
+        deleted_count = db.cleanup_old_data(days_to_keep=30)
+        if deleted_count > 0:
+            print(f"Cleaned up {deleted_count} old weather records")
+        return deleted_count
+    except Exception as e:
+        print(f"Error during cleanup: {e}")
+        return 0
+
+# Run cleanup on startup
+cleanup_old_weather_data()
+
 @app.route('/api/weather')
 def get_weather():
     """Get weather data for all locations"""
@@ -91,6 +107,38 @@ def get_locations():
         {"name": "First Connecticut", "lat": "45.0926", "lon": "-71.2478"}
     ]
     return jsonify(locations)
+
+@app.route('/api/cleanup', methods=['POST'])
+def trigger_cleanup():
+    """Manually trigger cleanup of old weather data"""
+    try:
+        days_to_keep = request.json.get('days_to_keep', 30) if request.json else 30
+        deleted_count = cleanup_old_weather_data()
+        
+        # Get cleanup statistics
+        from working_database import WorkingWeatherDatabase
+        db = WorkingWeatherDatabase()
+        cleanup_stats = db.get_cleanup_statistics()
+        
+        return jsonify({
+            "success": True,
+            "deleted_records": deleted_count,
+            "cleanup_stats": cleanup_stats,
+            "message": f"Cleanup completed. Kept data from last {days_to_keep} days."
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/cleanup/stats')
+def get_cleanup_stats():
+    """Get cleanup statistics"""
+    try:
+        from working_database import WorkingWeatherDatabase
+        db = WorkingWeatherDatabase()
+        cleanup_stats = db.get_cleanup_statistics()
+        return jsonify(cleanup_stats)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/')
 def index():

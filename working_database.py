@@ -192,6 +192,65 @@ class WorkingWeatherDatabase:
             logger.error(f"Error retrieving fishing conditions: {e}")
             return []
 
+    def cleanup_old_data(self, days_to_keep: int = 30) -> int:
+        """Remove weather data older than specified days"""
+        try:
+            cutoff_timestamp = int((datetime.datetime.now() - datetime.timedelta(days=days_to_keep)).timestamp())
+            
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                
+                # Count records to be deleted
+                cursor.execute("SELECT COUNT(*) FROM weather_data WHERE date_ts < ?", (cutoff_timestamp,))
+                records_to_delete = cursor.fetchone()[0]
+                
+                if records_to_delete > 0:
+                    # Delete old records
+                    cursor.execute("DELETE FROM weather_data WHERE date_ts < ?", (cutoff_timestamp,))
+                    conn.commit()
+                    
+                    logger.info(f"Cleaned up {records_to_delete} weather records older than {days_to_keep} days")
+                    return records_to_delete
+                else:
+                    logger.info(f"No weather records older than {days_to_keep} days to clean up")
+                    return 0
+                    
+        except Exception as e:
+            logger.error(f"Error cleaning up old weather data: {e}")
+            return 0
+
+    def get_cleanup_statistics(self) -> Dict[str, Any]:
+        """Get statistics about data that could be cleaned up"""
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                
+                # Count records older than 30 days
+                cutoff_30 = int((datetime.datetime.now() - datetime.timedelta(days=30)).timestamp())
+                cursor.execute("SELECT COUNT(*) FROM weather_data WHERE date_ts < ?", (cutoff_30,))
+                older_than_30 = cursor.fetchone()[0]
+                
+                # Count records older than 60 days
+                cutoff_60 = int((datetime.datetime.now() - datetime.timedelta(days=60)).timestamp())
+                cursor.execute("SELECT COUNT(*) FROM weather_data WHERE date_ts < ?", (cutoff_60,))
+                older_than_60 = cursor.fetchone()[0]
+                
+                # Count records older than 90 days
+                cutoff_90 = int((datetime.datetime.now() - datetime.timedelta(days=90)).timestamp())
+                cursor.execute("SELECT COUNT(*) FROM weather_data WHERE date_ts < ?", (cutoff_90,))
+                older_than_90 = cursor.fetchone()[0]
+                
+                return {
+                    'older_than_30_days': older_than_30,
+                    'older_than_60_days': older_than_60,
+                    'older_than_90_days': older_than_90,
+                    'total_records': self.get_statistics().get('total_records', 0)
+                }
+                
+        except Exception as e:
+            logger.error(f"Error getting cleanup statistics: {e}")
+            return {}
+
 if __name__ == '__main__':
     # Example usage
     db = WorkingWeatherDatabase()
