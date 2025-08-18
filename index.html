@@ -6,100 +6,92 @@
     <title>NH-VT Trolling Conditions</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="css/shared.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #1e40af;
-            --accent-color: #3b82f6;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
+        /* Page-specific styles for index.html */
+
+        /* Weather module specific styles */
+        .weather-module-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: var(--gray-800);
-            background-color: var(--gray-50);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6, #60a5fa, #93c5fd);
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, 
-                rgba(34, 197, 94, 0.1) 0%, 
-                rgba(59, 130, 246, 0.2) 25%, 
-                rgba(147, 51, 234, 0.1) 50%, 
-                rgba(236, 72, 153, 0.1) 75%, 
-                rgba(34, 197, 94, 0.1) 100%);
-            pointer-events: none;
-        }
-
-        .header-content {
+        .weather-module-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--gray-100);
+            padding-bottom: 1rem;
         }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+        .weather-module-title {
             font-size: 1.5rem;
-            font-weight: 700;
+            font-weight: 600;
+            color: var(--gray-900);
         }
 
-        .logo-image {
-            font-size: 3rem;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
-
-        .logo-text {
+        .weather-module-controls {
             display: flex;
-            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* Weather data table styles */
+        .weather-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .weather-table th,
+        .weather-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .weather-table th {
+            background-color: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .weather-table tr:hover {
+            background-color: var(--gray-50);
+        }
+
+        .rating-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rating-badge.excellent {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .rating-badge.good {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .rating-badge.fair {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+                .rating-badge.poor {
+            background-color: var(--danger-color);
+            color: white;
+        }
             line-height: 1.2;
         }
 
@@ -474,204 +466,7 @@
             overflow: hidden;
         }
 
-        /* Water Temperature Module */
-        .water-temp-module-section {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            margin-bottom: 2rem;
-        }
-
-        .water-temp-module-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--gray-100);
-            padding-bottom: 1rem;
-        }
-
-        .water-temp-module-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .water-temp-module-controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .water-temp-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .water-temp-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border: 2px solid var(--gray-200);
-            transition: all 0.3s ease;
-        }
-
-        .water-temp-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-            border-color: var(--primary-color);
-        }
-
-        .water-temp-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--gray-100);
-        }
-
-        .water-temp-header .lake-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin: 0;
-        }
-
-        .temp-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-            font-weight: 700;
-            font-size: 1.125rem;
-            color: white;
-        }
-
-        .temp-badge.cold {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-        }
-
-        .temp-badge.cool {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .temp-badge.warm {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .temp-badge.hot {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        .water-temp-details {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .temp-detail {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0.75rem;
-            background: var(--gray-50);
-            border-radius: 6px;
-            border-left: 3px solid var(--primary-color);
-        }
-
-        .temp-detail .detail-label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--gray-700);
-            text-transform: uppercase;
-            letter-spacing: 0.25px;
-        }
-
-        .temp-detail .detail-value {
-            font-weight: 700;
-            color: var(--gray-900);
-        }
-
-        .fishing-analysis::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.1);
-            pointer-events: none;
-        }
-
-        .fishing-analysis strong {
-            color: white;
-            font-size: 0.875rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .fishing-analysis p {
-            margin: 0.75rem 0 0 0;
-            font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.6;
-            position: relative;
-            z-index: 1;
-        }
-
-        .badge-great {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge-good {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .badge-fair {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .badge-moderate {
-            background: #fed7aa;
-            color: #c2410c;
-        }
-
-        .badge-challenging {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .badge-poor {
-            background: #fecaca;
-            color: #7f1d1d;
-        }
-
-        /* Loading */
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            padding: 2rem;
-            color: var(--gray-600);
-        }
-
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid var(--gray-200);
-            border-top: 3px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+        /* Duplicate CSS removed - styles are defined at the top of the file */
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -875,25 +670,7 @@
                 </div>
             </div>
 
-            <!-- Water Temperature Module -->
-            <div class="water-temp-module-section">
-                <div class="water-temp-module-header">
-                    <h2 class="water-temp-module-title">🌡️ Water Temperatures</h2>
-                    <div class="water-temp-module-controls">
-                        <button class="refresh-btn" id="refreshWaterTempBtn">
-                            <i class="fas fa-sync-alt"></i>
-                            Refresh
-                        </button>
-                    </div>
-                </div>
 
-                <div id="waterTemperatureSection">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        Loading water temperature data...
-                    </div>
-                </div>
-            </div>
 
             <!-- Weather Module -->
             <div class="weather-module-section">
@@ -940,147 +717,123 @@
         </div>
     </main>
 
+    <script src="js/utils.js"></script>
     <script>
         // Weather data structure
         let weatherData = [];
         let filteredData = [];
         
-        // Water temperature data structure
-        let waterTempData = {};
+
 
         // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
+        function initializeDashboard() {
+            console.log('🚀 Dashboard initializing...');
             document.title = 'NH-VT Trolling Conditions';
+            
+            // Check if utils are loaded
+            if (typeof FishingUtils === 'undefined') {
+                console.error('❌ FishingUtils not loaded! Retrying in 100ms...');
+                setTimeout(initializeDashboard, 100);
+                return;
+            }
+            console.log('✅ FishingUtils loaded successfully');
+            
+
+            
             loadWeatherData();
-            loadWaterTemperatureData();
             setupEventListeners();
-        });
+            console.log('🚀 Dashboard initialization complete');
+        }
+
+        // Wait for both DOM and scripts to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeDashboard);
+        } else {
+            // DOM is already loaded, check if scripts are ready
+            setTimeout(initializeDashboard, 0);
+        }
 
         // Setup event listeners
         function setupEventListeners() {
             const refreshBtn = document.getElementById('refreshBtn');
-            const refreshWaterTempBtn = document.getElementById('refreshWaterTempBtn');
             const dayFilter = document.getElementById('dayFilter');
             const locationFilter = document.getElementById('locationFilter');
             const conditionFilter = document.getElementById('conditionFilter');
             
             if (refreshBtn) refreshBtn.addEventListener('click', loadWeatherData);
-            if (refreshWaterTempBtn) refreshWaterTempBtn.addEventListener('click', loadWaterTemperatureData);
             if (dayFilter) dayFilter.addEventListener('change', filterData);
             if (locationFilter) locationFilter.addEventListener('change', filterData);
             if (conditionFilter) conditionFilter.addEventListener('change', filterData);
         }
         
-        // Load water temperature data
-        async function loadWaterTemperatureData() {
-            try {
-                const response = await fetch('/api/water-temperature/latest');
-                if (response.ok) {
-                    waterTempData = await response.json();
-                    updateWaterTemperatureDisplay();
-                }
-            } catch (error) {
-                console.error('Error loading water temperature data:', error);
-            }
-        }
-        
-        // Update water temperature display
-        function updateWaterTemperatureDisplay() {
-            const waterTempSection = document.getElementById('waterTemperatureSection');
-            if (!waterTempSection) return;
+
+
+        // Load weather data using shared utility
+        async function loadWeatherData() {
+            console.log('🌤️ Starting weather data load...');
+            console.log('🔍 FishingUtils object:', typeof FishingUtils);
+            console.log('🔍 FishingUtils.loadWeatherData:', typeof FishingUtils?.loadWeatherData);
             
-            if (Object.keys(waterTempData).length === 0) {
-                waterTempSection.innerHTML = `
-                    <div class="no-data">
-                        <p>Water temperature data is currently unavailable. Please check back later.</p>
-                    </div>
-                `;
+            if (typeof FishingUtils === 'undefined') {
+                console.error('❌ FishingUtils is undefined!');
                 return;
             }
             
-            let html = '<div class="water-temp-grid">';
-            
-            for (const [lake, data] of Object.entries(waterTempData)) {
-                const tempF = data.temperature_fahrenheit.toFixed(1);
-                const tempC = data.temperature_celsius.toFixed(1);
-                const source = data.source;
-                const timestamp = new Date(data.timestamp).toLocaleString();
-                
-                html += `
-                    <div class="water-temp-card">
-                        <div class="water-temp-header">
-                            <h3 class="lake-name">${lake}</h3>
-                            <div class="temp-badge ${getTempClass(tempF)}">${tempF}°F</div>
-                        </div>
-                        <div class="water-temp-details">
-                            <div class="temp-detail">
-                                <span class="detail-label">Temperature</span>
-                                <span class="detail-value">${tempF}°F / ${tempC}°C</span>
-                            </div>
-                            <div class="temp-detail">
-                                <span class="detail-label">Source</span>
-                                <span class="detail-value">${source}</span>
-                            </div>
-                            <div class="temp-detail">
-                                <span class="detail-label">Updated</span>
-                                <span class="detail-value">${timestamp}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
+            if (typeof FishingUtils.loadWeatherData !== 'function') {
+                console.error('❌ FishingUtils.loadWeatherData is not a function!');
+                return;
             }
             
-            html += '</div>';
-            waterTempSection.innerHTML = html;
-        }
-        
-        // Get temperature class for styling
-        function getTempClass(tempF) {
-            const temp = parseFloat(tempF);
-            if (temp < 50) return 'cold';
-            if (temp < 65) return 'cool';
-            if (temp < 75) return 'warm';
-            return 'hot';
-        }
-
-        // Load weather data
-        async function loadWeatherData() {
-            const weatherContent = document.getElementById('weatherContent');
-            weatherContent.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Loading weather data...
-                </div>
-            `;
+            FishingUtils.showLoading('weatherContent', 'Loading weather data...');
 
             try {
-                const response = await fetch('/api/weather');
+                console.log('📡 Calling FishingUtils.loadWeatherData()...');
+                console.log('⏱️ Starting API call...');
+                const startTime = Date.now();
+                weatherData = await FishingUtils.loadWeatherData();
+                const endTime = Date.now();
+                console.log(`⏱️ API call completed in ${endTime - startTime}ms`);
+                console.log('📊 Weather data received:', weatherData);
+                console.log('📊 Weather data length:', weatherData.length);
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const data = await response.json();
-                weatherData = data;
                 populateDayFilter();
                 filteredData = [...weatherData];
-                displayWeatherData();
+                
+                try {
+                    displayWeatherData();
+                    console.log('✅ Weather data loaded and displayed successfully');
+                } catch (displayError) {
+                    console.error('❌ Error displaying weather data:', displayError);
+                    FishingUtils.showError('weatherContent', 'Error displaying weather data. Please check console for details.', displayError);
+                }
             } catch (error) {
-                console.error('Error loading weather data:', error);
-                weatherContent.innerHTML = `
-                    <div class="loading">
-                        <i class="fas fa-exclamation-triangle" style="color: #ef4444; font-size: 1.5rem;"></i>
-                        <span>Failed to load weather data. Please try again.</span>
-                        <br><small style="color: #6b7280;">Error: ${error.message}</small>
-                    </div>
-                `;
+                console.error('❌ Error loading weather data:', error);
+                FishingUtils.showError('weatherContent', 'Failed to load weather data. Please try again.', error);
             }
         }
 
         // Populate day filter with available dates
         function populateDayFilter() {
+            console.log('🔍 populateDayFilter() called');
             const dayFilter = document.getElementById('dayFilter');
-            const uniqueDays = [...new Set(weatherData.map(item => item.date_str))].sort();
+            console.log('🔍 dayFilter element:', dayFilter);
+            
+            if (!dayFilter) {
+                console.error('❌ dayFilter element not found!');
+                return;
+            }
+            
+            console.log('🔍 weatherData length:', weatherData.length);
+            console.log('🔍 weatherData sample:', weatherData.slice(0, 2));
+            
+            // Get unique dates and sort them chronologically
+            const uniqueDays = [...new Set(weatherData.map(item => item.date_str))].sort((a, b) => {
+                // Convert date strings to Date objects for proper chronological sorting
+                const dateA = new Date(a);
+                const dateB = new Date(b);
+                return dateA - dateB; // Sort from oldest to newest
+            });
+            console.log('🔍 uniqueDays found (chronologically sorted):', uniqueDays);
             
             // Clear existing options except the first one
             dayFilter.innerHTML = '<option value="">Select a Day</option>';
@@ -1091,6 +844,8 @@
                 option.textContent = day;
                 dayFilter.appendChild(option);
             });
+            
+            console.log('✅ populateDayFilter() completed');
         }
 
         // Filter data
@@ -1099,11 +854,36 @@
             const locationFilter = document.getElementById('locationFilter').value;
             const conditionFilter = document.getElementById('conditionFilter').value;
 
-            filteredData = weatherData.filter(item => {
+            // First, filter the data based on user selections
+            let filtered = weatherData.filter(item => {
                 const dayMatch = !dayFilter || item.date_str === dayFilter;
                 const locationMatch = !locationFilter || item.location === locationFilter;
-                const conditionMatch = !conditionFilter || item.fishing_base.includes(conditionFilter);
+                // Normalize fishing_base to string safely to avoid runtime errors
+                const fishingBaseNormalized = (item && item.fishing_base !== undefined && item.fishing_base !== null)
+                    ? item.fishing_base.toString()
+                    : '';
+                const conditionMatch = !conditionFilter || fishingBaseNormalized.includes(conditionFilter);
                 return dayMatch && locationMatch && conditionMatch;
+            });
+
+            // Deduplicate by keeping only the most recent record for each unique lake+date combination
+            const seen = new Map();
+            filteredData = filtered.filter(item => {
+                const key = `${item.location}-${item.date_str}`;
+                if (seen.has(key)) {
+                    // If we've seen this lake+date before, keep the one with the most recent created_at
+                    const existing = seen.get(key);
+                    if (item.created_at > existing.created_at) {
+                        seen.set(key, item);
+                        return true; // Keep this newer one
+                    } else {
+                        return false; // Keep the existing one
+                    }
+                } else {
+                    // First time seeing this lake+date combination
+                    seen.set(key, item);
+                    return true;
+                }
             });
 
             displayWeatherData();
@@ -1111,10 +891,18 @@
 
         // Display weather data
         function displayWeatherData() {
+            console.log('🔄 displayWeatherData() called');
+            console.log('📊 Filtered data length:', filteredData.length);
+            console.log('📊 Filtered data sample:', filteredData.slice(0, 2));
+            
             const weatherContent = document.getElementById('weatherContent');
             const dayFilter = document.getElementById('dayFilter').value;
             
+            console.log('🎯 Day filter value:', dayFilter);
+            console.log('📊 Weather content element:', weatherContent);
+            
             if (filteredData.length === 0) {
+                console.log('⚠️ No filtered data to display');
                 weatherContent.innerHTML = `
                     <div class="loading">
                         <i class="fas fa-info-circle" style="color: #6b7280; font-size: 1.5rem;"></i>
@@ -1124,104 +912,64 @@
                 return;
             }
 
-            // If a specific day is selected, show a card-based layout
-            if (dayFilter) {
-                const selectedDay = dayFilter;
-                const dayData = filteredData.filter(item => item.date_str === selectedDay);
-                
-                const cardsHTML = `
-                    <div class="day-summary">
-                        <h3 class="day-title">${selectedDay} - All Lakes & Conditions</h3>
-                        <div class="lake-cards">
-                            ${dayData.map(item => `
-                                <div class="lake-card">
-                                    <div class="lake-header">
-                                        <h4 class="lake-name">${item.location}</h4>
-                                        <span class="fishing-badge ${getBadgeClass(item.fishing_base)}">
-                                            ${getFishingRating(item.fishing_base)}
-                                        </span>
-                                    </div>
-                                    <div class="lake-details">
-                                        <div class="detail-row">
-                                            <span class="detail-label">Water Temperature:</span>
-                                            <span class="detail-value">${item.water_temp ? item.water_temp.toFixed(1) + '°F' : 'Unknown'}</span>
-                                        </div>
-                                        <div class="detail-row">
-                                            <span class="detail-label">Temperature:</span>
-                                            <span class="detail-value">${item.temp ? item.temp.toFixed(1) + '°F' : 'N/A'}</span>
-                                        </div>
-                                        <div class="detail-row">
-                                            <span class="detail-label">Wind Speed:</span>
-                                            <span class="detail-value">${item.wind_speed ? item.wind_speed.toFixed(1) + ' mph' : 'N/A'}</span>
-                                        </div>
-                                        <div class="detail-row">
-                                            <span class="detail-label">Pressure:</span>
-                                            <span class="detail-value">${item.pressure ? item.pressure.toFixed(2) + ' inHg' : 'N/A'}</span>
-                                        </div>
-                                        <div class="detail-row">
-                                            <span class="detail-label">Sunrise:</span>
-                                            <span class="detail-value">${item.sunrise || 'N/A'}</span>
-                                        </div>
-                                        <div class="detail-row">
-                                            <span class="detail-label">Conditions:</span>
-                                            <span class="detail-value">${item.summary || 'N/A'}</span>
-                                        </div>
-                                        <div class="fishing-analysis">
-                                            <strong>Fishing Analysis:</strong>
-                                            <p>${item.fishing || 'N/A'}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-                
-                weatherContent.innerHTML = cardsHTML;
-            } else {
-                // Show the original table layout for all data
-                const tableHTML = `
-                    <table class="weather-table">
-                        <thead>
+            // Always show the table layout for consistent display
+            const tableHTML = `
+                <table class="weather-table">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Date</th>
+                            <th>Temperature</th>
+                            <th>Wind Speed</th>
+                            <th>Conditions</th>
+                            <th>Fishing Rating</th>
+                            <th>Rating Explanation</th>
+                            <th>Pressure</th>
+                            <th>Sunrise</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredData.map(item => `
                             <tr>
-                                <th>Location</th>
-                                <th>Date</th>
-                                <th>Temperature</th>
-                                <th>Wind Speed</th>
-                                <th>Conditions</th>
-                                <th>Fishing Rating</th>
-                                <th>Rating Explanation</th>
+                                <td><strong>${item.location}</strong></td>
+                                <td>${item.date_str}</td>
+                                <td>${item.temp_day ? item.temp_day.toFixed(1) + '°F' : 'N/A'}</td>
+                                <td>${item.wind_speed ? item.wind_speed.toFixed(1) + ' mph' : 'N/A'}</td>
+                                <td>${item.summary || 'N/A'}</td>
+                                <td>
+                                    <span class="fishing-badge ${getBadgeClass(item.fishing_base)}">
+                                        ${FishingUtils.getFishingRating(item.fishing_base)}
+                                    </span>
+                                </td>
+                                <td class="rating-explanation">${FishingUtils.getRatingExplanation(item)}</td>
+                                <td>${item.pressure ? item.pressure.toFixed(2) + ' inHg' : 'N/A'}</td>
+                                <td>${item.sunrise || 'N/A'}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            ${filteredData.map(item => `
-                                <tr>
-                                    <td><strong>${item.location}</strong></td>
-                                    <td>${item.date_str}</td>
-                                    <td>${item.temp ? item.temp.toFixed(1) + '°F' : 'N/A'}</td>
-                                    <td>${item.wind_speed ? item.wind_speed.toFixed(1) + ' mph' : 'N/A'}</td>
-                                    <td>${item.summary || 'N/A'}</td>
-                                    <td>
-                                        <span class="fishing-badge ${getBadgeClass(item.fishing_base)}">
-                                            ${getFishingRating(item.fishing_base)}
-                                        </span>
-                                    </td>
-                                    <td class="rating-explanation">${getRatingExplanation(item)}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-                
-                weatherContent.innerHTML = tableHTML;
-            }
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            weatherContent.innerHTML = tableHTML;
         }
 
         // Get badge class based on fishing condition
         function getBadgeClass(fishingBase) {
             if (!fishingBase) return 'badge-fair';
             
-            // Handle numeric ratings (1-10)
+            // Convert to string for safe comparison
+            const fishingStr = String(fishingBase).toLowerCase();
+            
+            // Handle text ratings
+            if (fishingStr.includes('excellent')) return 'badge-great';
+            if (fishingStr.includes('great')) return 'badge-great';
+            if (fishingStr.includes('good')) return 'badge-good';
+            if (fishingStr.includes('fair')) return 'badge-fair';
+            if (fishingStr.includes('moderate')) return 'badge-moderate';
+            if (fishingStr.includes('challenging')) return 'badge-challenging';
+            if (fishingStr.includes('poor')) return 'badge-poor';
+            
+            // Handle numeric ratings (1-10) if they exist
             if (typeof fishingBase === 'number') {
                 if (fishingBase >= 8) return 'badge-great';
                 if (fishingBase >= 6) return 'badge-good';
@@ -1229,124 +977,10 @@
                 return 'badge-poor';
             }
             
-            // Fallback for old text ratings
-            if (fishingBase.includes('Excellent')) return 'badge-great';
-            if (fishingBase.includes('Great')) return 'badge-great';
-            if (fishingBase.includes('Good')) return 'badge-good';
-            if (fishingBase.includes('Fair')) return 'badge-fair';
-            if (fishingBase.includes('Moderate')) return 'badge-moderate';
-            if (fishingBase.includes('Challenging')) return 'badge-challenging';
-            if (fishingBase.includes('Poor')) return 'badge-poor';
-            
             return 'badge-fair';
         }
 
-        // Get fishing rating from fishing base
-        function getFishingRating(fishingBase) {
-            if (!fishingBase) return 'Fair';
-            
-            // Handle numeric ratings (1-10)
-            if (typeof fishingBase === 'number') {
-                return `${fishingBase}/10`;
-            }
-            
-            // Fallback for old text ratings
-            if (fishingBase.includes('Excellent')) return 'Excellent';
-            if (fishingBase.includes('Great')) return 'Great';
-            if (fishingBase.includes('Good')) return 'Good';
-            if (fishingBase.includes('Fair')) return 'Fair';
-            if (fishingBase.includes('Moderate')) return 'Moderate';
-            if (fishingBase.includes('Poor')) return 'Poor';
-            
-            return 'Fair';
-        }
 
-        // Get rating color based on numeric rating
-        function getRatingColor(rating) {
-            if (typeof rating === 'number') {
-                if (rating >= 8) return 'excellent';
-                if (rating >= 6) return 'good';
-                if (rating >= 4) return 'fair';
-                return 'poor';
-            }
-            return 'fair';
-        }
-
-        // Get rating explanation based on weather conditions
-        function getRatingExplanation(item) {
-            if (!item) return 'No data available';
-            
-            const temp = item.temp;
-            const windSpeed = item.wind_speed;
-            const pressure = item.pressure;
-            const summary = item.summary || '';
-            
-            let explanations = [];
-            
-            // WIND SPEED - PRIMARY FACTOR (heavily weighted)
-            if (windSpeed) {
-                if (windSpeed <= 4) {
-                    explanations.push('EXCELLENT wind conditions (0-4 mph) - Perfect for trolling');
-                } else if (windSpeed <= 6) {
-                    explanations.push('GOOD wind conditions (4.1-6 mph) - Very fishable');
-                } else if (windSpeed <= 8) {
-                    explanations.push('FAIR wind conditions (6.1-8 mph) - Manageable but challenging');
-                } else if (windSpeed <= 10) {
-                    explanations.push('TOUGH wind conditions (8.1-10 mph) - Difficult for trolling');
-                } else {
-                    explanations.push('HARD NO - Wind too strong (10.1+ mph) - Not recommended');
-                }
-            }
-            
-            // Temperature analysis (secondary factor)
-            if (temp) {
-                if (temp >= 75) {
-                    explanations.push('High temperature may reduce fish activity');
-                } else if (temp >= 65 && temp < 75) {
-                    explanations.push('Optimal temperature for fishing');
-                } else if (temp >= 50 && temp < 65) {
-                    explanations.push('Cool temperature, fish may be active');
-                } else if (temp < 50) {
-                    explanations.push('Cold temperature may limit fish activity');
-                }
-            }
-            
-            // Pressure analysis (tertiary factor)
-            if (pressure) {
-                if (pressure >= 30.0) {
-                    explanations.push('High pressure - stable conditions');
-                } else if (pressure >= 29.8) {
-                    explanations.push('Normal pressure - good conditions');
-                } else {
-                    explanations.push('Low pressure - changing conditions');
-                }
-            }
-            
-            // Weather conditions analysis (minimal impact)
-            if (summary) {
-                if (summary.toLowerCase().includes('clear') || summary.toLowerCase().includes('sunny')) {
-                    explanations.push('Clear skies - good visibility');
-                } else if (summary.toLowerCase().includes('cloudy') || summary.toLowerCase().includes('overcast')) {
-                    explanations.push('Cloudy conditions - fish may be more active');
-                } else if (summary.toLowerCase().includes('rain') || summary.toLowerCase().includes('shower')) {
-                    explanations.push('Rainy conditions - may affect fishing');
-                }
-            }
-            
-            // If no specific explanations, provide general rating reason
-            if (explanations.length === 0) {
-                const rating = getFishingRating(item.fishing_base);
-                if (rating === 'Excellent' || rating === 'Great') {
-                    explanations.push('Favorable conditions for fishing');
-                } else if (rating === 'Good' || rating === 'Fair') {
-                    explanations.push('Moderate conditions for fishing');
-                } else {
-                    explanations.push('Challenging conditions for fishing');
-                }
-            }
-            
-            return explanations.join('; ');
-        }
     </script>
 </body>
 </html>

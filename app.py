@@ -7,8 +7,12 @@ Provides REST API endpoints for the fishing information portal
 import os
 import json
 import sqlite3
+import sys
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+
+# Add scripts directory to Python path for working_database import
+sys.path.append(os.path.join(os.path.dirname(__file__), 'scripts'))
 
 app = Flask(__name__)
 CORS(app)
@@ -40,7 +44,7 @@ def get_weather():
     try:
         conn = sqlite3.connect(WEATHER_DB)
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM weather_data LIMIT 50")
+        cursor.execute("SELECT * FROM weather_data ORDER BY created_at DESC LIMIT 50")
         rows = cursor.fetchall()
         
         # Get column names
@@ -72,6 +76,67 @@ def get_stocking():
         
         conn.close()
         return jsonify(stocking_data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/water-temperature')
+def get_water_temperature():
+    """Get water temperature data"""
+    try:
+        conn = sqlite3.connect(WATER_TEMP_DB)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM water_temperature_records ORDER BY timestamp DESC LIMIT 50")
+        rows = cursor.fetchall()
+        
+        columns = [description[0] for description in cursor.description]
+        water_temp_data = []
+        for row in rows:
+            water_temp_data.append(dict(zip(columns, row)))
+        
+        conn.close()
+        return jsonify(water_temp_data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/water-temperature/latest')
+def get_latest_water_temperature():
+    """Get latest water temperature data for each lake"""
+    try:
+        conn = sqlite3.connect(WATER_TEMP_DB)
+        cursor = conn.cursor()
+        
+        # Get the latest temperature for each lake
+        cursor.execute("""
+            SELECT lake_name, temperature_celsius, temperature_fahrenheit, 
+                   timestamp, source, latitude, longitude, depth, notes
+            FROM water_temperature_records w1
+            WHERE timestamp = (
+                SELECT MAX(timestamp) 
+                FROM water_temperature_records w2 
+                WHERE w2.lake_name = w1.lake_name
+            )
+            ORDER BY lake_name
+        """)
+        
+        rows = cursor.fetchall()
+        
+        # Convert to dictionary format expected by frontend
+        latest_data = {}
+        for row in rows:
+            lake_name = row[0]
+            latest_data[lake_name] = {
+                'temperature_celsius': row[1],
+                'temperature_fahrenheit': row[2],
+                'timestamp': row[3],
+                'source': row[4],
+                'latitude': row[5],
+                'longitude': row[6],
+                'depth': row[7],
+                'notes': row[8]
+            }
+        
+        conn.close()
+        return jsonify(latest_data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -146,10 +211,63 @@ def get_cleanup_stats():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+from flask import send_file
+
 @app.route('/')
 def index():
     """Serve the main page"""
-    return app.send_static_file('index.html')
+    return send_file('index.html')
+
+@app.route('/weather.html')
+def weather():
+    """Serve the weather page"""
+    return send_file('weather.html')
+
+@app.route('/forecast.html')
+def forecast():
+    """Serve the forecast page"""
+    return send_file('forecast.html')
+
+@app.route('/locations.html')
+def locations():
+    """Serve the locations page"""
+    return send_file('locations.html')
+
+@app.route('/stocking.html')
+def stocking():
+    """Serve the stocking page"""
+    return send_file('stocking.html')
+
+@app.route('/analysis.html')
+def analysis():
+    """Serve the analysis page"""
+    return send_file('analysis.html')
+
+@app.route('/guide.html')
+def guide():
+    """Serve the guide page"""
+    return send_file('guide.html')
+
+@app.route('/js/<path:filename>')
+def serve_js(filename):
+    """Serve JavaScript files"""
+    return send_file(f'js/{filename}')
+
+@app.route('/css/<path:filename>')
+def serve_css(filename):
+    """Serve CSS files"""
+    return send_file(f'css/{filename}')
+
+@app.route('/debug_weather.html')
+def debug_weather():
+    """Serve the weather debug page"""
+    return send_file('debug_weather.html')
+
+
+
+
+
+
 
 if __name__ == '__main__':
     print("Starting Fishing Weather API Server...")
