@@ -7,70 +7,53 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="css/shared.css" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L89SVZ43T0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-L89SVZ43T0');
+    </script>
+
     <style>
-        /* Page-specific styles for weather.html */
+        /* Page-specific styles for weather.html - now using shared card styles */
         .weather-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
             margin-top: 2rem;
         }
 
+        /* Use shared card styles from shared.css */
         .weather-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border: 2px solid var(--gray-200);
-            transition: all 0.3s ease;
-        }
-
-        .weather-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-            border-color: var(--primary-color);
+            /* Inherits from .card class */
         }
 
         .weather-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--gray-100);
+            /* Inherits from .card-header class */
         }
 
         .weather-header .location-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin: 0;
+            /* Inherits from .card-title class */
         }
 
         .weather-details {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            /* Inherits from .card-content class */
         }
 
         .weather-detail {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
+            /* Inherits from .card-item class */
         }
 
         .detail-label {
-            font-weight: 500;
-            color: var(--gray-600);
-            font-size: 0.875rem;
+            /* Inherits from .card-label class */
         }
 
-                .detail-value {
-            font-weight: 600;
-            color: var(--gray-800);
-        }
-            line-height: 1.2;
+        .detail-value {
+            /* Inherits from .card-value class */
         }
 
         .logo-title {
@@ -735,7 +718,7 @@
                         <h3 style="color: var(--gray-900); margin-bottom: 1.5rem; border-bottom: 3px solid var(--primary-color); padding-bottom: 1rem; font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; padding: 1rem 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
                             ${date || 'Today'}
                         </h3>
-                        <div class="weather-grid">
+                        <div class="card-grid">
                 `;
 
                 items.forEach(item => {
@@ -756,60 +739,63 @@
                     const visibility = Math.floor(Math.random() * 5) + 5;
                     
                     html += `
-                        <div class="weather-card">
-                            <div class="weather-card-header">
-                                <span class="location-name">${item.location}</span>
-                                <span class="fishing-badge ${item.badgeClass}">${getFishingRating(item.fishing_base)}</span>
+                        <div class="forecast-card">
+                            <div class="forecast-header">
+                                <div>
+                                    <div class="forecast-location">${item.location}</div>
+                                    <div class="forecast-date">${item.date_str || 'Today'}</div>
+                                </div>
+                                <span class="badge ${item.badgeClass}">${getFishingRating(item.fishing_base)}</span>
                             </div>
-                            <div class="weather-details">
-                                <div class="weather-detail">
-                                    <span class="weather-detail-label">Sunrise:</span>
-                                    <span class="weather-detail-value">${item.sunrise}</span>
+                            <div class="forecast-conditions">
+                                <div class="forecast-condition-item">
+                                    <span class="forecast-condition-label">Sunrise:</span>
+                                    <span class="forecast-condition-value">${item.sunrise}</span>
                                 </div>
-                                <div class="weather-detail">
-                                    <span class="weather-detail-label">Sunset:</span>
-                                    <span class="weather-detail-value">${sunsetTime}</span>
+                                <div class="forecast-condition-item">
+                                    <span class="forecast-condition-label">Sunset:</span>
+                                    <span class="forecast-condition-value">${sunsetTime}</span>
                                 </div>
-                                <div class="weather-detail">
-                                    <span class="weather-detail-label">Temperature:</span>
-                                    <span class="weather-detail-value">${item.temp}°F</span>
+                                <div class="forecast-condition-item">
+                                    <span class="forecast-condition-label">Temperature:</span>
+                                    <span class="forecast-condition-value">${item.temp}°F</span>
                                 </div>
-                                <div class="weather-detail">
-                                    <span class="weather-detail-label">Humidity:</span>
-                                    <span class="weather-detail-value">${humidity}%</span>
+                                <div class="forecast-condition-item">
+                                    <span class="forecast-condition-label">Humidity:</span>
+                                    <span class="forecast-condition-value">${humidity}%</span>
                                 </div>
-                                <div class="weather-detail">
-                                    <span class="weather-detail-label">Wind Speed:</span>
-                                    <span class="weather-detail-value">${item.wind_speed} mph</span>
+                                <div class="forecast-condition-item">
+                                    <span class="forecast-condition-label">Wind Speed:</span>
+                                    <span class="forecast-condition-value">${item.wind_speed} mph</span>
                                 </div>
-                                <div class="weather-detail">
-                                    <span class="weather-detail-label">Wind Gust:</span>
-                                    <span class="weather-detail-value">${item.wind_gust} mph</span>
+                                <div class="forecast-condition-item">
+                                    <span class="forecast-condition-label">Wind Gust:</span>
+                                    <span class="forecast-condition-value">${item.wind_gust} mph</span>
                                 </div>
-                                <div class="weather-detail">
-                                    <span class="weather-detail-label">Pressure:</span>
-                                    <span class="weather-detail-value">${item.pressure} inHg</span>
+                                <div class="forecast-condition-item">
+                                    <span class="forecast-condition-label">Pressure:</span>
+                                    <span class="forecast-style-condition-value">${item.pressure} inHg</span>
                                 </div>
-                                <div class="weather-detail">
-                                    <span class="weather-detail-label">Visibility:</span>
-                                    <span class="weather-detail-value">${visibility} mi</span>
+                                <div class="forecast-condition-item">
+                                    <span class="forecast-condition-label">Visibility:</span>
+                                    <span class="forecast-condition-value">${visibility} mi</span>
                                 </div>
-                                <div class="weather-detail">
-                                    <span class="weather-detail-label">Moon Phase:</span>
-                                    <span class="weather-detail-value">${moonPhase}</span>
+                                <div class="forecast-condition-item">
+                                    <span class="forecast-condition-label">Moon Phase:</span>
+                                    <span class="forecast-condition-value">${moonPhase}</span>
                                 </div>
-                                <div class="weather-detail">
-                                    <span class="weather-detail-label">Water Temperature:</span>
-                                    <span class="weather-detail-value">${getWaterTemperature(item.location)}</span>
+                                <div class="forecast-condition-item">
+                                    <span class="forecast-condition-label">Water Temperature:</span>
+                                    <span class="forecast-condition-value">${getWaterTemperature(item.location)}</span>
                                 </div>
-                                <div class="weather-detail full-width">
-                                    <span class="weather-detail-label">Conditions:</span>
-                                    <span class="weather-detail-value">${item.summary}</span>
+                                <div class="forecast-condition-item">
+                                    <span class="forecast-condition-label">Conditions:</span>
+                                    <span class="forecast-condition-value">${item.summary}</span>
                                 </div>
-                                <div class="fishing-analysis">
-                                    <strong>Fishing Analysis:</strong>
-                                    <p>${item.fishing || 'Detailed fishing conditions and recommendations based on current weather patterns.'}</p>
-                                </div>
+                            </div>
+                            <div class="fishing-analysis">
+                                <strong>Fishing Analysis:</strong>
+                                <p>${item.fishing || 'Detailed fishing conditions and recommendations based on current weather patterns.'}</p>
                             </div>
                         </div>
                     `;

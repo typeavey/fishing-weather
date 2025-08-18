@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NH-VT Trolling Conditions</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L89SVZ43T0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-L89SVZ43T0');
+    </script>
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="css/shared.css" rel="stylesheet">
@@ -914,40 +925,42 @@
 
             // Always show the table layout for consistent display
             const tableHTML = `
-                <table class="weather-table">
-                    <thead>
-                        <tr>
-                            <th>Location</th>
-                            <th>Date</th>
-                            <th>Temperature</th>
-                            <th>Wind Speed</th>
-                            <th>Conditions</th>
-                            <th>Fishing Rating</th>
-                            <th>Rating Explanation</th>
-                            <th>Pressure</th>
-                            <th>Sunrise</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${filteredData.map(item => `
+                <div class="enhanced-table">
+                    <table class="weather-table">
+                        <thead>
                             <tr>
-                                <td><strong>${item.location}</strong></td>
-                                <td>${item.date_str}</td>
-                                <td>${item.temp_day ? item.temp_day.toFixed(1) + '°F' : 'N/A'}</td>
-                                <td>${item.wind_speed ? item.wind_speed.toFixed(1) + ' mph' : 'N/A'}</td>
-                                <td>${item.summary || 'N/A'}</td>
-                                <td>
-                                    <span class="fishing-badge ${getBadgeClass(item.fishing_base)}">
-                                        ${FishingUtils.getFishingRating(item.fishing_base)}
-                                    </span>
-                                </td>
-                                <td class="rating-explanation">${FishingUtils.getRatingExplanation(item)}</td>
-                                <td>${item.pressure ? item.pressure.toFixed(2) + ' inHg' : 'N/A'}</td>
-                                <td>${item.sunrise || 'N/A'}</td>
+                                <th>Location</th>
+                                <th>Date</th>
+                                <th>Temperature</th>
+                                <th>Wind Speed</th>
+                                <th>Conditions</th>
+                                <th>Fishing Rating</th>
+                                <th>Rating Explanation</th>
+                                <th>Pressure</th>
+                                <th>Sunrise</th>
                             </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            ${filteredData.map(item => `
+                                <tr>
+                                    <td><strong>${item.location}</strong></td>
+                                    <td>${item.date_str}</td>
+                                    <td>${item.temp_day ? item.temp_day.toFixed(1) + '°F' : 'N/A'}</td>
+                                    <td>${item.wind_speed ? item.wind_speed.toFixed(1) + ' mph' : 'N/A'}</td>
+                                    <td>${item.summary || 'N/A'}</td>
+                                    <td>
+                                        <span class="badge ${getBadgeClass(item.fishing_base)}">
+                                            ${FishingUtils.getFishingRating(item.fishing_base)}
+                                        </span>
+                                    </td>
+                                    <td class="rating-explanation">${FishingUtils.getRatingExplanation(item)}</td>
+                                    <td>${item.pressure ? item.pressure.toFixed(2) + ' inHg' : 'N/A'}</td>
+                                    <td>${item.sunrise || 'N/A'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
             `;
             
             weatherContent.innerHTML = tableHTML;

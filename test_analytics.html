@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Test Page</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L89SVZ43T0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-L89SVZ43T0');
+      
+      // Add a test event
+      gtag('event', 'test_page_view', {
+        'event_category': 'test',
+        'event_label': 'analytics_test'
+      });
+    </script>
+</head>
+<body>
+    <h1>Google Analytics Test Page</h1>
+    <p>This page is testing if Google Analytics is working.</p>
+    <p>Check your Google Analytics Real-Time reports to see if this page view appears.</p>
+    
+    <button onclick="testEvent()">Test Custom Event</button>
+    
+    <script>
+        function testEvent() {
+            gtag('event', 'button_click', {
+                'event_category': 'engagement',
+                'event_label': 'test_button'
+            });
+            alert('Event sent! Check Google Analytics Real-Time events.');
+        }
+    </script>
+</body>
+</html>

@@ -4,98 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fishing Locations - NH-VT Trolling Conditions</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L89SVZ43T0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-L89SVZ43T0');
+    </script>
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="css/shared.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --secondary-color: #1e40af;
-            --accent-color: #3b82f6;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: var(--gray-800);
-            background-color: var(--gray-50);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6, #60a5fa, #93c5fd);
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, 
-                rgba(34, 197, 94, 0.1) 0%, 
-                rgba(59, 130, 246, 0.2) 25%, 
-                rgba(147, 51, 234, 0.1) 50%, 
-                rgba(236, 72, 153, 0.1) 75%, 
-                rgba(34, 197, 94, 0.1) 100%);
-            pointer-events: none;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .logo-image {
-            font-size: 3rem;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
+        /* Page-specific styles for locations.html - now using shared styles */
 
         .logo-text {
             display: flex;
@@ -152,44 +76,20 @@
         }
 
         /* Location Cards */
-        .locations-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
+        /* Use shared card-grid class from shared.css */
 
+        /* Use shared card styles from shared.css */
         .location-card {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s, box-shadow 0.2s;
+            /* Inherits from .card class */
             border-left: 4px solid var(--primary-color);
-            display: flex;
-            flex-direction: column;
-            height: fit-content;
-        }
-
-        .location-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         .location-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            flex-shrink: 0;
+            /* Inherits from .card-header class */
         }
 
         .location-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin: 0;
-            line-height: 1.2;
+            /* Inherits from .card-title class */
         }
 
         .location-icon {
@@ -206,41 +106,20 @@
         }
 
         .location-details {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-            flex-grow: 1;
+            /* Inherits from .card-content class */
         }
 
         .location-detail {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--gray-100);
-            gap: 1rem;
-        }
-
-        .location-detail:last-child {
-            border-bottom: none;
+            /* Inherits from .card-item class */
         }
 
         .location-detail-label {
-            color: var(--gray-600);
-            font-weight: 500;
-            font-size: 0.875rem;
-            flex-shrink: 0;
+            /* Inherits from .card-label class */
             min-width: 80px;
         }
 
         .location-detail-value {
-            font-weight: 600;
-            color: var(--gray-900);
-            font-size: 0.875rem;
-            text-align: right;
-            word-break: break-word;
-            hyphens: auto;
+            /* Inherits from .card-value class */
         }
 
         .location-description {
@@ -468,30 +347,33 @@
             </div>
 
             <!-- Locations Grid -->
-            <div class="locations-grid">
-                <div class="location-card">
-                    <div class="location-header">
-                        <h3 class="location-name">Lake Winnipesaukee</h3>
+            <div class="card-grid">
+                <div class="forecast-card">
+                    <div class="forecast-header">
+                        <div>
+                            <div class="forecast-location">Lake Winnipesaukee</div>
+                            <div class="forecast-date">New Hampshire</div>
+                        </div>
                         <div class="location-icon">
                             <i class="fas fa-water"></i>
                         </div>
                     </div>
-                    <div class="location-details">
-                        <div class="location-detail">
-                            <span class="location-detail-label">Coordinates:</span>
-                            <span class="location-detail-value">43.6406°N, 72.1440°W</span>
+                    <div class="forecast-conditions">
+                        <div class="forecast-condition-item">
+                            <span class="forecast-condition-label">Coordinates:</span>
+                            <span class="forecast-condition-value">43.6406°N, 72.1440°W</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Size:</span>
-                            <span class="location-detail-value">71 sq mi</span>
+                        <div class="forecast-condition-item">
+                            <span class="forecast-condition-label">Size:</span>
+                            <span class="forecast-condition-value">71 sq mi</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Max Depth:</span>
-                            <span class="location-detail-value">212 ft</span>
+                        <div class="forecast-style-condition-item">
+                            <span class="forecast-condition-label">Max Depth:</span>
+                            <span class="forecast-condition-value">212 ft</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Fish Species:</span>
-                            <span class="location-detail-value">Bass, Trout, Salmon</span>
+                        <div class="forecast-style-condition-item">
+                            <span class="forecast-condition-label">Fish Species:</span>
+                            <span class="forecast-condition-value">Bass, Trout, Salmon</span>
                         </div>
                     </div>
                     <p class="location-description">
@@ -510,29 +392,29 @@
                     </div>
                 </div>
 
-                <div class="location-card">
-                    <div class="location-header">
-                        <h3 class="location-name">Newfound Lake</h3>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Newfound Lake</h3>
                         <div class="location-icon">
                             <i class="fas fa-water"></i>
                         </div>
                     </div>
-                    <div class="location-details">
-                        <div class="location-detail">
-                            <span class="location-detail-label">Coordinates:</span>
-                            <span class="location-detail-value">43.7528°N, 71.7999°W</span>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <span class="card-label">Coordinates:</span>
+                            <span class="card-value">43.7528°N, 71.7999°W</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Size:</span>
-                            <span class="location-detail-value">4,106 acres</span>
+                        <div class="card-item">
+                            <span class="card-label">Size:</span>
+                            <span class="card-value">4,106 acres</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Max Depth:</span>
-                            <span class="location-detail-value">183 ft</span>
+                        <div class="card-item">
+                            <span class="card-label">Max Depth:</span>
+                            <span class="card-value">183 ft</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Fish Species:</span>
-                            <span class="location-detail-value">Lake Trout, Salmon</span>
+                        <div class="card-item">
+                            <span class="card-label">Fish Species:</span>
+                            <span class="card-value">Lake Trout, Salmon</span>
                         </div>
                     </div>
                     <p class="location-description">
@@ -551,29 +433,29 @@
                     </div>
                 </div>
 
-                <div class="location-card">
-                    <div class="location-header">
-                        <h3 class="location-name">Squam Lake</h3>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Squam Lake</h3>
                         <div class="location-icon">
                             <i class="fas fa-water"></i>
                         </div>
                     </div>
-                    <div class="location-details">
-                        <div class="location-detail">
-                            <span class="location-detail-label">Coordinates:</span>
-                            <span class="location-detail-value">43.8280°N, 71.5503°W</span>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <span class="card-label">Coordinates:</span>
+                            <span class="card-value">43.8280°N, 71.5503°W</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Size:</span>
-                            <span class="location-detail-value">6,791 acres</span>
+                        <div class="card-item">
+                            <span class="card-label">Size:</span>
+                            <span class="card-value">6,791 acres</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Max Depth:</span>
-                            <span class="location-detail-value">99 ft</span>
+                        <div class="card-item">
+                            <span class="card-label">Max Depth:</span>
+                            <span class="card-value">99 ft</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Fish Species:</span>
-                            <span class="location-detail-value">Bass, Pike, Perch</span>
+                        <div class="card-item">
+                            <span class="card-label">Fish Species:</span>
+                            <span class="card-value">Bass, Pike, Perch</span>
                         </div>
                     </div>
                     <p class="location-description">
@@ -592,29 +474,29 @@
                     </div>
                 </div>
 
-                <div class="location-card">
-                    <div class="location-header">
-                        <h3 class="location-name">Lake Champlain</h3>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Lake Champlain</h3>
                         <div class="location-icon">
                             <i class="fas fa-water"></i>
                         </div>
                     </div>
-                    <div class="location-details">
-                        <div class="location-detail">
-                            <span class="location-detail-label">Coordinates:</span>
-                            <span class="location-detail-value">44.4896°N, 73.3582°W</span>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <span class="card-label">Coordinates:</span>
+                            <span class="card-value">44.4896°N, 73.3582°W</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Size:</span>
-                            <span class="location-detail-value">490 sq mi</span>
+                        <div class="card-item">
+                            <span class="card-label">Size:</span>
+                            <span class="card-value">490 sq mi</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Max Depth:</span>
-                            <span class="location-detail-value">400 ft</span>
+                        <div class="card-item">
+                            <span class="card-label">Max Depth:</span>
+                            <span class="card-value">400 ft</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Fish Species:</span>
-                            <span class="location-detail-value">Bass, Pike, Walleye</span>
+                        <div class="card-item">
+                            <span class="card-label">Fish Species:</span>
+                            <span class="card-value">Bass, Pike, Walleye</span>
                         </div>
                     </div>
                     <p class="location-description">
@@ -633,29 +515,29 @@
                     </div>
                 </div>
 
-                <div class="location-card">
-                    <div class="location-header">
-                        <h3 class="location-name">Mascoma Lake</h3>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Mascoma Lake</h3>
                         <div class="location-icon">
                             <i class="fas fa-water"></i>
                         </div>
                     </div>
-                    <div class="location-details">
-                        <div class="location-detail">
-                            <span class="location-detail-label">Coordinates:</span>
-                            <span class="location-detail-value">43.6587°N, 72.3200°W</span>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <span class="card-label">Coordinates:</span>
+                            <span class="card-value">43.6587°N, 72.3200°W</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Size:</span>
-                            <span class="location-detail-value">1,000 acres</span>
+                        <div class="card-item">
+                            <span class="card-label">Size:</span>
+                            <span class="card-value">1,000 acres</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Max Depth:</span>
-                            <span class="location-detail-value">45 ft</span>
+                        <div class="card-item">
+                            <span class="card-label">Max Depth:</span>
+                            <span class="card-value">45 ft</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Fish Species:</span>
-                            <span class="location-detail-value">Bass, Perch, Sunfish</span>
+                        <div class="card-item">
+                            <span class="card-label">Fish Species:</span>
+                            <span class="card-value">Bass, Perch, Sunfish</span>
                         </div>
                     </div>
                     <p class="location-description">
@@ -674,29 +556,29 @@
                     </div>
                 </div>
 
-                <div class="location-card">
-                    <div class="location-header">
-                        <h3 class="location-name">Lake Sunapee</h3>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Lake Sunapee</h3>
                         <div class="location-icon">
                             <i class="fas fa-water"></i>
                         </div>
                     </div>
-                    <div class="location-details">
-                        <div class="location-detail">
-                            <span class="location-detail-label">Coordinates:</span>
-                            <span class="location-detail-value">43.3770°N, 72.0850°W</span>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <span class="card-label">Coordinates:</span>
+                            <span class="card-value">43.3770°N, 72.0850°W</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Size:</span>
-                            <span class="location-detail-value">4,085 acres</span>
+                        <div class="card-item">
+                            <span class="card-label">Size:</span>
+                            <span class="card-value">4,085 acres</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Max Depth:</span>
-                            <span class="location-detail-value">105 ft</span>
+                        <div class="card-item">
+                            <span class="card-label">Max Depth:</span>
+                            <span class="card-value">105 ft</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Fish Species:</span>
-                            <span class="location-detail-value">Salmon, Trout, Bass</span>
+                        <div class="card-item">
+                            <span class="card-label">Fish Species:</span>
+                            <span class="card-value">Salmon, Trout, Bass</span>
                         </div>
                     </div>
                     <p class="location-description">
@@ -715,29 +597,29 @@
                     </div>
                 </div>
 
-                <div class="location-card">
-                    <div class="location-header">
-                        <h3 class="location-name">First Connecticut Lake</h3>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">First Connecticut Lake</h3>
                         <div class="location-icon">
                             <i class="fas fa-water"></i>
                         </div>
                     </div>
-                    <div class="location-details">
-                        <div class="location-detail">
-                            <span class="location-detail-label">Coordinates:</span>
-                            <span class="location-detail-value">45.0926°N, 71.2478°W</span>
+                    <div class="card-content">
+                        <div class="card-item">
+                            <span class="card-label">Coordinates:</span>
+                            <span class="card-value">45.0926°N, 71.2478°W</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Size:</span>
-                            <span class="location-detail-value">3,000 acres</span>
+                        <div class="card-item">
+                            <span class="card-label">Size:</span>
+                            <span class="card-value">3,000 acres</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Max Depth:</span>
-                            <span class="location-detail-value">150 ft</span>
+                        <div class="card-item">
+                            <span class="card-label">Max Depth:</span>
+                            <span class="card-value">150 ft</span>
                         </div>
-                        <div class="location-detail">
-                            <span class="location-detail-label">Fish Species:</span>
-                            <span class="location-detail-value">Salmon, Trout, Bass</span>
+                        <div class="card-item">
+                            <span class="card-label">Fish Species:</span>
+                            <span class="card-value">Salmon, Trout, Bass</span>
                         </div>
                     </div>
                     <p class="location-description">
